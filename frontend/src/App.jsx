@@ -9,7 +9,10 @@ function App() {
     const [question, setQuestion] = useState("");
 
     const getResult = async () => {
-        const res = await fetch("http://127.0.0.1:8000/askLLM/" + question);
+        const res = await fetch(
+            "https://information-retrieval-chatbot.onrender.com/askLLM/" +
+                question
+        );
 
         let ans = await res.json();
 
@@ -26,6 +29,9 @@ function App() {
                 <input
                     className="outline-none border border-gray-500 p-2 rounded w-full"
                     type="text"
+                    onKeyDown={(e) => {
+                        if (e.key == "Enter") getResult();
+                    }}
                     onChange={(e) => {
                         setQuestion(e.target.value);
                     }}

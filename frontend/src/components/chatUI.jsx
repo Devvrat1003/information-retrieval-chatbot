@@ -7,7 +7,7 @@ export default function ChatUI(props) {
                 if (index % 2 == 0) {
                     return (
                         <div
-                            className="w-fit max-w-[60%] bg-blue-300 p-2 rounded self-end"
+                            className="w-fit max-w-[60%] bg-blue-300 px-2 py-1 rounded self-end"
                             key={index}
                         >
                             {msg}
@@ -16,7 +16,7 @@ export default function ChatUI(props) {
                 } else
                     return (
                         <div
-                            className="w-fit max-w-[60%] self-start bg-green-300 p-2 rounded"
+                            className="w-fit max-w-[60%] self-start bg-green-300 px-2 py-1 rounded"
                             key={index}
                         >
                             {msg}
