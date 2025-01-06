@@ -3,8 +3,6 @@ import getpass
 import os
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
-import time
-
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -13,7 +11,6 @@ origins = [
     "http://localhost",
     "http://localhost:5173/",
     "http://localhost:5173",
-
 ]
 
 app.add_middleware(
@@ -23,14 +20,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# @app.middleware("http")
-# async def add_process_time_header(request: Request, call_next):
-#     start_time = time.perf_counter()
-#     response = await call_next(request)
-#     process_time = time.perf_counter() - start_time
-#     response.headers["X-Process-Time"] = str(process_time)
-#     return response
 
 if not os.environ.get("GROQ_API_KEY"):
     os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")

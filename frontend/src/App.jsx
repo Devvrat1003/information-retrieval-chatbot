@@ -1,31 +1,45 @@
-import { useState } from 'react'
+import { useState } from "react";
+import "./index.css";
+import ChatUI from "./components/chatUI";
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [question, setQuestion] = useState("")
+    const [count, setCount] = useState(0);
+    const [chat, setChat] = useState([]);
+    const [curr, setCurr] = useState("");
+    const [question, setQuestion] = useState("");
 
-  const getResult = async () => {
-    const res = await fetch("http://127.0.0.1:8000/askLLM/" + question)
+    const getResult = async () => {
+        const res = await fetch("http://127.0.0.1:8000/askLLM/" + question);
 
-    let ans = await res.json();
-    console.log(ans);
-  }
+        let ans = await res.json();
 
-  return (
-    <div className='bg-black'>
-      <div className='flex gap-2'>
-        <input className='outline-none' type="text" onChange={(e) => {
-          setQuestion(e.target.value)
-        }} />
+        console.log(ans, "before");
+        setChat([...chat, question, ans]);
+        setCurr(ans);
+        console.log(chat, " chat afters");
+    };
 
-        <button onClick={getResult}>
-          ask Groq
-        </button>
-      </div>
+    return (
+        <div className="w-screen h-screen flex flex-col items-center justify-between px-96 py-4 gap-4">
+            <ChatUI chat={chat} />
+            <div className="flex gap-2 h-fit w-full">
+                <input
+                    className="outline-none border border-gray-500 p-2 rounded w-full"
+                    type="text"
+                    onChange={(e) => {
+                        setQuestion(e.target.value);
+                    }}
+                />
 
-
-    </div>
-  )
+                <button
+                    onClick={getResult}
+                    className="w-28 p-2 border border-black rounded"
+                >
+                    Ask Groq
+                </button>
+            </div>
+        </div>
+    );
 }
 
-export default App
+export default App;
