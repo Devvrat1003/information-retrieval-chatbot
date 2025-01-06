@@ -3,25 +3,18 @@ export default function ChatUI(props) {
     return (
         <div className="flex flex-col w-full border gap-2 p-2 rounded overflow-y-scroll">
             {chats.map((msg, index) => {
-                console.log("index", index);
-                if (index % 2 == 0) {
-                    return (
-                        <div
-                            className="w-fit max-w-[60%] bg-blue-300 px-2 py-1 rounded self-end"
-                            key={index}
-                        >
-                            {msg}
-                        </div>
-                    );
-                } else
-                    return (
-                        <div
-                            className="w-fit max-w-[60%] self-start bg-green-300 px-2 py-1 rounded"
-                            key={index}
-                        >
-                            {msg}
-                        </div>
-                    );
+                return (
+                    <div
+                        className={`w-fit max-w-[60%] ${
+                            index % 2 == 0 && "bg-blue-300 self-end"
+                        } ${
+                            index % 2 == 1 && "bg-green-300 self-start"
+                        } px-2 py-1 rounded`}
+                        key={index}
+                    >
+                        {msg}
+                    </div>
+                );
             })}
         </div>
     );

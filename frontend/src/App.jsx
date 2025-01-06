@@ -1,31 +1,39 @@
 import { useState } from "react";
 import "./index.css";
 import ChatUI from "./components/chatUI";
+import Navbar from "./components/navbar";
+import Placeholder from "./components/placeholder";
 
 function App() {
-    const [count, setCount] = useState(0);
     const [chat, setChat] = useState([]);
-    const [curr, setCurr] = useState("");
     const [question, setQuestion] = useState("");
 
     const getResult = async () => {
-        const res = await fetch(
-            "https://information-retrieval-chatbot.onrender.com/askLLM/" +
-                // "http://127.0.0.1:8000/askLLM/" +
-                question
-        );
+        if (question === "") {
+            alert("Uh Oh! You forgot to ask a question");
+            return;
+        }
+        try {
+            const res = await fetch(
+                "https://information-retrieval-chatbot.onrender.com/askLLM/" +
+                    question
+            );
 
-        let ans = await res.json();
+            let ans = await res.json();
 
-        console.log(ans, "before");
-        setChat([...chat, question, ans]);
-        setCurr(ans);
-        console.log(chat, " chat afters");
+            setChat([...chat, question, ans]);
+        } catch (error) {
+            console.log("error", error);
+            return;
+        }
     };
 
     return (
-        <div className="w-screen h-screen flex flex-col items-center justify-between px-96 py-4 gap-4">
-            <ChatUI chat={chat} />
+        <div className="w-screen h-screen px-96 py-4 flex flex-col justify-between">
+            <div className="flex flex-col items-center justify-between gap-4">
+                <Navbar></Navbar>
+                <ChatUI chat={chat} />
+            </div>
             <div className="flex gap-2 h-fit w-full">
                 <input
                     className="outline-none border border-gray-500 p-2 rounded w-full"
