@@ -35,7 +35,7 @@ function App() {
             </div>
             <div className="flex gap-2 h-fit w-full">
                 <input
-                    className="outline-none border border-gray-500 p-2 rounded w-full"
+                    className="outline-none border border-black p-2 rounded w-full font-mono bg-transparent "
                     type="text"
                     onKeyDown={(e) => {
                         if (e.key == "Enter") getResult();
@@ -47,7 +47,7 @@ function App() {
 
                 <button
                     onClick={getResult}
-                    className="w-28 p-2 border border-black rounded"
+                    className="w-28 p-2 border border-black rounded hover:bg-gray-100 font-serif"
                 >
                     Ask Groq
                 </button>
