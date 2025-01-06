@@ -2,7 +2,6 @@ import { useState } from "react";
 import "./index.css";
 import ChatUI from "./components/chatUI";
 import Navbar from "./components/navbar";
-import Placeholder from "./components/placeholder";
 
 function App() {
     const [chat, setChat] = useState([]);
