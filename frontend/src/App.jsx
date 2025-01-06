@@ -1,34 +1,30 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [question, setQuestion] = useState("")
+
+  const getResult = async () => {
+    const res = await fetch("http://127.0.0.1:8000/askLLM/" + question)
+
+    let ans = await res.json();
+    console.log(ans);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className='bg-black'>
+      <div className='flex gap-2'>
+        <input className='outline-none' type="text" onChange={(e) => {
+          setQuestion(e.target.value)
+        }} />
+
+        <button onClick={getResult}>
+          ask Groq
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+
+
+    </div>
   )
 }
 
