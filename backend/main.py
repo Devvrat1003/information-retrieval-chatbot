@@ -8,9 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "http://localhost",
-    "http://localhost:5173/",
     "http://localhost:5173",
+    "https://information-retriever-chatbot.netlify.app"
 ]
 
 app.add_middleware(

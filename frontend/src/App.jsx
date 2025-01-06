@@ -11,6 +11,7 @@ function App() {
     const getResult = async () => {
         const res = await fetch(
             "https://information-retrieval-chatbot.onrender.com/askLLM/" +
+                // "http://127.0.0.1:8000/askLLM/" +
                 question
         );
 
