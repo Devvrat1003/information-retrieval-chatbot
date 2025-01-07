@@ -1,5 +1,8 @@
 fastapi
 fastapi[standard]
-langchain_groq
+langchain_community
 langchain_core
+langchain_groq
 uvicorn
+pydantic
+psycopg2-binary

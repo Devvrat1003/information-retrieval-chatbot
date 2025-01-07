@@ -1,0 +1,124 @@
+```Given an input question, create a syntactically correct postgresql query to run to help find the answer. Unless the user specifies in his question a specific number of examples they wish to obtain, always limit your query to at most 10 results. You can order the results by a relevant column to return the most interesting examples in the database.
+
+Never query for all the columns from a specific table, only ask for a the few relevant columns given the question.
+
+Check which columns are in which tables and use accordingly.
+Pay attention to use only the column names that you can see in the schema description. Be careful to not query for columns that do not exist. Also, pay attention to which column is in which table.
+
+Only use the following tables:
+-- Bookings Table
+CREATE TABLE bookings (
+    bookingid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    guestname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phonenumber VARCHAR(15),
+    checkindate DATE NOT NULL,
+    checkoutdate DATE NOT NULL,
+    roomid INT NOT NULL,
+    numrooms INT NOT NULL,
+    numguests INT NOT NULL,
+    totalamount DECIMAL(10, 2),
+    paymentstatus VARCHAR(50) DEFAULT 'pending',
+    FOREIGN KEY (roomid) REFERENCES rooms(roomid)
+);
+
+-- Rooms Table
+CREATE TABLE rooms (
+    roomid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    roomtype VARCHAR(50) NOT NULL,
+    description TEXT,
+    pricepernight DECIMAL(10, 2) NOT NULL,
+    maxcapacity INT NOT NULL,
+    extrabedcharge DECIMAL(10, 2) DEFAULT 0,
+    availability INT NOT NULL,
+    imagegallery TEXT
+);
+
+
+-- Room Allocations Table
+CREATE TABLE roomallocations (
+    allocationid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    bookingid INT NOT NULL,
+    roomid INT NOT NULL,
+    numguests INT NOT NULL,
+    FOREIGN KEY (bookingid) REFERENCES bookings(bookingid),
+    FOREIGN KEY (roomid) REFERENCES rooms(roomid)
+);
+
+-- Services Table
+CREATE TABLE services (
+    serviceid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2),
+    availabilitystatus BOOLEAN DEFAULT TRUE
+);
+
+
+
+-- Special Offers Table
+CREATE TABLE specialoffers (
+    offerid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    offername VARCHAR(100) NOT NULL,
+    description TEXT,
+    discountpercentage DECIMAL(5, 2),
+    conditions TEXT,
+    startdate DATE,
+    enddate DATE
+);
+
+-- FAQs Table
+CREATE TABLE faqs (
+    faqid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    question TEXT NOT NULL,
+    answer TEXT NOT NULL,
+    topic VARCHAR(100)
+);
+
+-- Hotel Policies Table
+CREATE TABLE hotelpolicies (
+    policyid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    policyname VARCHAR(100) NOT NULL,
+    description TEXT,
+    refundpolicy TEXT
+);
+
+-- Charges Table
+CREATE TABLE charges (
+    chargeid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    description TEXT
+);
+
+-- Special Requests Table
+CREATE TABLE specialrequests (
+    requestid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    bookingid INT,
+    requesttext TEXT NOT NULL,
+    status VARCHAR(50) DEFAULT 'pending',
+    FOREIGN KEY (bookingid) REFERENCES bookings(bookingid)
+);
+
+-- Support Tickets Table
+CREATE TABLE supporttickets (
+    ticketid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    customername VARCHAR(100),
+    email VARCHAR(100),
+    issuedescription TEXT,
+    status VARCHAR(50) DEFAULT 'open',
+    createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Customer Feedback Table
+CREATE TABLE customerfeedback (
+    feedbackid BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    bookingid INT,
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    comments TEXT,
+    createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (bookingid) REFERENCES bookings(bookingid)
+);
+
+
+```

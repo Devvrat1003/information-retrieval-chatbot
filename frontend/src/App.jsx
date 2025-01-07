@@ -28,7 +28,7 @@ function App() {
     };
 
     return (
-        <div className="w-screen h-screen px-96 py-4 flex flex-col justify-between">
+        <div className="w-screen h-screen px-96 py-4 flex flex-col justify-between bg-[#b0bd8c]">
             <div className="flex flex-col items-center justify-between gap-4">
                 <Navbar></Navbar>
                 <ChatUI chat={chat} />
@@ -47,7 +47,7 @@ function App() {
 
                 <button
                     onClick={getResult}
-                    className="w-28 p-2 border border-black rounded hover:bg-gray-100 font-serif"
+                    className="w-28 p-2 border border-black rounded hover:bg-[#b0bd7c] font-serif"
                 >
                     Ask Groq
                 </button>

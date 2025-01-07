@@ -1,0 +1,63 @@
+```Given an input question, create a syntactically correct postgresql query to run to help find the answer. Unless the user specifies in his question a specific number of examples they wish to obtain, always limit your query to at most 10 results. You can order the results by a relevant column to return the most interesting examples in the database.
+
+Never query for all the columns from a specific table, only ask for a the few relevant columns given the question.
+
+Pay attention to use only the column names that you can see in the schema description. Be careful to not query for columns that do not exist. Also, pay attention to which column is in which table.
+
+
+Only use the following tables:
+
+
+-- Table to store hotel details
+CREATE TABLE hotels (
+hotel_id INT AUTO_INCREMENT PRIMARY KEY,
+hotel_name VARCHAR(255) NOT NULL,
+location VARCHAR(255),
+rating DECIMAL(2, 1),
+contact_number VARCHAR(20),
+description TEXT
+);
+
+-- Table to store room details
+CREATE TABLE hotel_rooms (
+room_id INT AUTO_INCREMENT PRIMARY KEY,
+hotel_id INT,
+room_type VARCHAR(50) NOT NULL,
+price DECIMAL(10, 2),
+availability_status VARCHAR(50) CHECK (availability_status IN ('available', 'booked', 'maintenance')) DEFAULT 'available',
+FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id) ON DELETE CASCADE
+);
+
+-- Table to store hotel amenities
+CREATE TABLE hotel_amenities (
+amenity_id INT AUTO_INCREMENT PRIMARY KEY,
+hotel_id INT,
+amenity_description VARCHAR(255) NOT NULL,
+FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id) ON DELETE CASCADE
+);
+
+-- Table to track room bookings
+CREATE TABLE hotel_bookings (
+booking_id INT AUTO_INCREMENT PRIMARY KEY,
+user_id INT,
+hotel_id INT,
+room_id INT,
+check_in_date DATE NOT NULL,
+check_out_date DATE NOT NULL,
+total_price DECIMAL(10, 2),
+booking_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+status VARCHAR(50) CHECK (status IN ('confirmed', 'cancelled')) DEFAULT 'confirmed',
+FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id) ON DELETE CASCADE,
+FOREIGN KEY (room_id) REFERENCES hotel_rooms(room_id) ON DELETE CASCADE
+);
+
+-- Table to log user queries
+CREATE TABLE queries (
+query_id INT AUTO_INCREMENT PRIMARY KEY,
+user_id INT,
+query_text TEXT NOT NULL,
+response_text TEXT,
+query_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);```

@@ -2,8 +2,16 @@ from fastapi import FastAPI, Request
 import getpass
 import os
 from langchain_groq import ChatGroq
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from fastapi.middleware.cors import CORSMiddleware
+import executeQuery
+from dotenv import load_dotenv
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import START, MessagesState, StateGraph
+
+
+# Load environment variables from .env
+load_dotenv()
 
 app = FastAPI()
 
@@ -25,6 +33,7 @@ if not os.environ.get("GROQ_API_KEY"):
 
 model = ChatGroq(model="llama3-8b-8192")
 
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -32,10 +41,19 @@ async def root():
 @app.get("/askLLM/{question}")
 async def getLLMResponse(question:str):
     messages = [
-        SystemMessage("Act as an information retrieval chatbot. I'll ask you questions, and you'll respond with relevant information from your knowledge base. Go ahead and initialize your knowledge graph. You can provide answers in a conversational tone. Ready when you are!\"\n\n**Example Questions:**\n\n* What is the capital of France?\n* Who is the CEO of Google?\n* What is the definition of artificial intelligence?\n* Can you explain the concept of quantum computing?\n* What is the latest update on the COVID-19 pandemic?\n* Can you provide a list of top 5 universities in the world for computer science?\n\n**Note:** You can add or modify the questions to test the chatbot's abilities. Also, you can provide additional training data or fine-tune the model to improve its performance.You can ask question if something is not clear to you."),
-        HumanMessage(question),
+        HumanMessage("You are a helpful intermediary chatbot for a hotel website. You have to answer question based on their query. Feel free to ask question to user if there is any doubt."),
+        # HumanMessage(question),
     ]
+    result = executeQuery.run(question)
+    query = executeQuery.write_query({"question":question})["query"]
+    queryRes = executeQuery.execute_query({"query":query})
+    responseToUser = executeQuery.generate_answer({"question":question, "query": query, "result": queryRes})
 
-    ans = model.invoke(messages).content
+    model.invoke(messages)
+        
+    # print(query, "query") 
+    # print(responseToUser)
+    # print(result, "result")
 
-    return ans
+    return {"result": result[2]}
+    return responseToUser

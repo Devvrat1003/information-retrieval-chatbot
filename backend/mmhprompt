@@ -1,0 +1,336 @@
+Given an input question, create a syntactically correct postgresql query to run to help find the answer. Unless the user specifies in his question a specific number of examples they wish to obtain, always limit your query to at most 10 results. You can order the results by a relevant column to return the most interesting examples in the database.
+
+Never query for all the columns from a specific table, only ask for a the few relevant columns given the question.
+The database maybe case sensitive. So search over the data by making all of them lowercase.
+
+Pay attention to use only the column names that you can see in the schema description. Be careful to not query for columns that do not exist. Also, pay attention to which column is in which table.
+
+
+Only use the following tables:
+
+-- Table structure for table `amenities`CREATE TABLE `amenities` 
+(
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `amenity_room_category`
+CREATE TABLE `amenity_room_category` (
+  `id` bigint UNSIGNED NOT NULL,
+  `room_category_id` bigint UNSIGNED NOT NULL,
+  `amenity_id` bigint UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `bookings`
+	CREATE TABLE `bookings` (
+	  `id` bigint UNSIGNED NOT NULL,
+	  `property_id` bigint UNSIGNED NOT NULL,
+	  `is_read` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+	  `folio_number` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `payment_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `property_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `incentive_approve` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
+	  `reservation_no` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `guest_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `guest_email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `guest_phone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `agency_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `status` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `booking_tag` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'MMH',
+	  `refund_to_customer` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `arrival_date` date DEFAULT NULL,
+	  `departure_date` date DEFAULT NULL,
+	  `created_by` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `created_staff_id` bigint DEFAULT NULL,
+	  `staff_id` bigint DEFAULT NULL,
+	  `source_type` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `system_generated` tinyint(1) DEFAULT NULL,
+	  `room_categories` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `meal_plans` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `reference_no` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `no_of_rooms` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `total_room_nights` smallint DEFAULT NULL,
+	  `cash` decimal(10,2) DEFAULT NULL,
+	  `credit_card` decimal(10,2) DEFAULT NULL,
+	  `debit_card` decimal(10,2) DEFAULT NULL,
+	  `quick_pay` decimal(10,2) DEFAULT NULL,
+	  `payment_wallets` decimal(10,2) DEFAULT NULL,
+	  `net_banking` decimal(10,2) DEFAULT NULL,
+	  `neft` decimal(10,2) DEFAULT NULL,
+	  `rtgs` decimal(10,2) DEFAULT NULL,
+	  `imps` decimal(10,2) DEFAULT NULL,
+	  `upi` decimal(10,2) DEFAULT NULL,
+	  `ussd` decimal(10,2) DEFAULT NULL,
+	  `cash_card` decimal(10,2) DEFAULT NULL,
+	  `cheque_dd` decimal(10,2) DEFAULT NULL,
+	  `e_collect` decimal(10,2) DEFAULT NULL,
+	  `debit_note` decimal(10,2) DEFAULT NULL,
+	  `credit_note` decimal(10,2) DEFAULT NULL,
+	  `bills_payment` decimal(10,2) DEFAULT NULL,
+	  `gift_card` decimal(10,2) DEFAULT NULL,
+	  `commission` decimal(10,2) DEFAULT NULL,
+	  `tds` decimal(10,2) DEFAULT NULL,
+	  `agent_payable` decimal(10,2) DEFAULT NULL,
+	  `air_pay` decimal(10,2) DEFAULT NULL,
+	  `bank_transfer` decimal(10,2) DEFAULT NULL,
+	  `aub_paymate` decimal(10,2) DEFAULT NULL,
+	  `qr_code` decimal(10,2) DEFAULT NULL,
+	  `bank_deposit` decimal(10,2) DEFAULT NULL,
+	  `momo` decimal(10,2) DEFAULT NULL,
+	  `bad_debts` decimal(10,2) DEFAULT NULL,
+	  `gift_certificate` decimal(10,2) DEFAULT NULL,
+	  `amex_card` decimal(10,2) DEFAULT NULL,
+	  `razor_pay` decimal(10,2) DEFAULT NULL,
+	  `loyalty_rewards` decimal(10,2) DEFAULT NULL,
+	  `bdo_gcash_qrph` decimal(10,2) DEFAULT NULL,
+	  `palawan_scan_to_pay` decimal(10,2) DEFAULT NULL,
+	  `total_amount` decimal(10,2) DEFAULT NULL,
+	  `total_payments` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `total_outstanding_amount` decimal(10,2) DEFAULT NULL,
+	  `total_check_in_amount` decimal(10,2) DEFAULT NULL,
+	  `net_sale_percentage` decimal(5,2) DEFAULT NULL,
+	  `payment_notes` mediumtext COLLATE utf8mb4_unicode_ci,
+	  `special_instruction` mediumtext COLLATE utf8mb4_unicode_ci,
+	  `internal_notes` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `revised` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `staff_get_amount` decimal(8,2) DEFAULT NULL,
+	  `total_booking_value` decimal(10,2) DEFAULT NULL,
+	  `prepaid` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `payment_collected` decimal(10,2) DEFAULT NULL,
+	  `payment_collected_by` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `payment_mode` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `pay_at_hotel` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `pending_payment_to_hotel` decimal(10,2) DEFAULT NULL,
+	  `payment_to_hotel` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `amount_paid` decimal(10,2) DEFAULT NULL,
+	  `remarks` mediumtext COLLATE utf8mb4_unicode_ci,
+	  `retention_applicable` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `retention_amount` decimal(10,2) DEFAULT NULL,
+	  `net_sales` decimal(10,2) DEFAULT NULL,
+	  `incentive_base` decimal(10,2) DEFAULT NULL,
+	  `transaction_charge_gst` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `mmh_adjustment` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `final_due_hotel` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `advance_amount_collected` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `amount_check_in` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	  `paid_to_hotel_remark` mediumtext COLLATE utf8mb4_unicode_ci,
+	  `mmh_adjustment_remark` mediumtext COLLATE utf8mb4_unicode_ci,
+	  `final_due_to_hotel_remark` mediumtext COLLATE utf8mb4_unicode_ci,
+	  `last_update_date` date DEFAULT NULL,
+	  `created_at` timestamp NULL DEFAULT NULL,
+	  `updated_at` timestamp NULL DEFAULT NULL
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Table structure for table `clauses`
+
+CREATE TABLE `clauses` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` longtext COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Example values
+-- INSERT INTO `clauses` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
+-- (5, 'Money Back Guarantee 1', 'MarketMyHotel.in provides money back guarantee to Hoteliers if the business generated from all sources in 1st three months of services is less than the total fixed fees paid. \r\nFor eg. If 1st three months fixed fees paid by Hotel is 90,000 and MarketMyHotel.in is able to generate only 65,000 in 1st three months, then MarketMyHotel.in will give a credit note of 25,000 to Hotel that can be either redeemed or adjusted in next quarter fees.', '2024-05-23 15:28:21', '2024-05-23 15:28:21');
+
+-- Table structure for table `company_faqs`
+--
+
+CREATE TABLE `company_faqs` (
+  `id` bigint UNSIGNED NOT NULL,
+  `created_by` int NOT NULL DEFAULT '0',
+  `question` longtext COLLATE utf8mb4_unicode_ci,
+  `answer` longtext COLLATE utf8mb4_unicode_ci,
+  `owned_by` enum('hotel','mmh') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'mmh',
+  `property_id` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `countries` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `country_tasks`
+--
+
+CREATE TABLE `country_tasks` (
+  `id` bigint UNSIGNED NOT NULL,
+  `task_id` bigint UNSIGNED NOT NULL,
+  `country_id` bigint UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `employee_booking_incentives`
+--
+
+CREATE TABLE `employee_booking_incentives` (
+  `id` bigint UNSIGNED NOT NULL,
+  `booking_id` int NOT NULL,
+  `property_id` int NOT NULL,
+  `employee_id` int NOT NULL,
+  `payment_type` enum('online','offline') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'online',
+  `admin_target_amount` decimal(12,2) NOT NULL,
+  `employee_archived_target_amount` decimal(12,2) NOT NULL,
+  `threshold_level` decimal(12,2) NOT NULL,
+  `incentive_percentage` decimal(5,2) NOT NULL,
+  `employee_incentive_amount` decimal(12,2) NOT NULL,
+  `year` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `month_duration` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `incentive_date` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `faqs`
+--
+
+CREATE TABLE `faqs` (
+  `id` bigint UNSIGNED NOT NULL,
+  `policy_id` int NOT NULL DEFAULT '0',
+  `question` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `answer` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `general_terms`
+
+CREATE TABLE `profile_documents` (
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `profile_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pdf_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `link` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Table structure for table `room_categories`
+--
+
+CREATE TABLE `room_categories` (
+  `id` bigint UNSIGNED NOT NULL,
+  `room_category_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `property_id` bigint DEFAULT NULL,
+  `room` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adult_occupancy` tinyint DEFAULT NULL,
+  `child_occupancy` tinyint DEFAULT NULL,
+  `other_image` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `room_video` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` longtext COLLATE utf8mb4_unicode_ci,
+  `room_category_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `services`
+--
+
+CREATE TABLE `services` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` enum('active','inactive') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `terms_condition` longtext COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Table structure for table `states`
+--
+
+CREATE TABLE `states` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `country_id` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `users` (
+  `id` bigint UNSIGNED NOT NULL,
+  `hotel_id` int NOT NULL DEFAULT '0',
+  `hotel_user_parent_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `hotel_user_designation` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `hotel_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `hotel_contact_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
+  `salutation` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone_number` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role_id` int NOT NULL DEFAULT '0',
+  `department_id` int NOT NULL DEFAULT '0',
+  `designation_id` int NOT NULL DEFAULT '0',
+  `djubo_staff_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_type` enum('admin','staff','hotel') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'staff',
+  `status` enum('active','inactive') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `policy_accepted` enum('no','yes') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
+  `birthdate` date DEFAULT NULL,
+  `gender` enum('male','female','other') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `profilepic` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `marital_status` enum('single','married') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'single',
+  `emergency_contact_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emergency_contact_number` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_relation` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `blood_id` int NOT NULL DEFAULT '0',
+  `medical_issue` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `medical_issue_remark` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_line1` text COLLATE utf8mb4_unicode_ci,
+  `address_line2` text COLLATE utf8mb4_unicode_ci,
+  `state_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `country_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `zipcode` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qualification` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `education_certificate` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `education_detail` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `experience` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `work_experience` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `experience_letter` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `experience_detail` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `salary_proof` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `salary_detail` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `join_date` date DEFAULT NULL,
+  `employee_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `personal_email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `company_phone_number` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `notice_period` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `salary` double(8,2) DEFAULT NULL,
+  `salary_start_date` date DEFAULT NULL,
+  `salary_end_date` date DEFAULT NULL,
+  `salary_join_date` date DEFAULT NULL,
+  `salary_status` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `salary_grade` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `salary_conve` double(8,2) DEFAULT NULL,
+  `salary_gross` double(8,2) DEFAULT NULL,
+  `salary_pe` double(8,2) DEFAULT NULL,
+  `salary_esi` double(8,2) DEFAULT NULL,
+  `salary_ctc` double(8,2) DEFAULT NULL,
+  `salary_pe12` double(8,2) DEFAULT NULL,
+  `salary_esic` double(8,2) DEFAULT NULL,
+  `salary_bonus` double(8,2) DEFAULT NULL,
+  `salary_pt` double(8,2) DEFAULT NULL,
+  `salary_deduction` double(8,2) DEFAULT NULL,
+  `salary_netpay` double(8,2) DEFAULT NULL,
+  `education_certificate_document` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `experience_letter_document` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `salary_proof_document` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `hotel_agreement_read` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
