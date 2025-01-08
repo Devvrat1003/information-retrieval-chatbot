@@ -10,4 +10,3 @@ pydantic
 psycopg2-binary
 python-dotenv
 typing_extensions
-re
