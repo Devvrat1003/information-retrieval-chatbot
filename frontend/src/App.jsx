@@ -18,15 +18,15 @@ function App() {
             setItem({ ...item, question: question });
             console.log(messages, "before");
             const res = await fetch(
-                // "https://information-retrieval-chatbot.onrender.com/askLLM/" +
-                "http://127.0.0.1:8000/askLLM",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(item),
-                }
+                "https://information-retrieval-chatbot.onrender.com/askLLM/" +
+                    // "http://127.0.0.1:8000/askLLM",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(item),
+                    }
             );
             let ans = await res.json();
             // setMessages([...messages, question, ans.response]);
