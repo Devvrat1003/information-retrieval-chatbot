@@ -1,5 +1,6 @@
 fastapi
 fastapi[standard]
+langchain
 langchain_community
 langchain_core
 langchain_groq
@@ -9,3 +10,5 @@ pydantic
 psycopg2-binary
 python-dotenv
 typing_extensions
+getpass
+re
