@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 import getpass
 import os
 from langchain_groq import ChatGroq

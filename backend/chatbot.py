@@ -1,12 +1,9 @@
 import executeQuery
-from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import START, MessagesState, StateGraph
 from langchain_core.messages import HumanMessage, AIMessage
 import os
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_community.utilities import SQLDatabase
 import re
 
 load_dotenv()
@@ -69,17 +66,17 @@ def extract_sql_query(text):
     return None
 
 def chatbot(question: str, messages: list):
-    print("------------------------------------- inside chatbot -----------------------------------------")
+    # print("------------------------------------- inside chatbot -----------------------------------------")
     messages.append(HumanMessage(question))
 
-    print("YOU : ", question)
+    # print("YOU : ", question)
     response = model.invoke(messages)
 
     isSqlQuery = extract_sql_query(response.content)
 
-    res = 'error'
+    res = 'nothing'
 
-    print("\n ----------------------------------------------\n", isSqlQuery, "\n---------------------------------------------\n")
+    # print("\n ----------------------------------------------\n", isSqlQuery, "\n---------------------------------------------\n")
     if isSqlQuery:
         result = executeQuery.execute_query({"query": isSqlQuery})
         responseDB = executeQuery.generate_answer({"question": question, "query": isSqlQuery, "result" : result})
@@ -91,7 +88,7 @@ def chatbot(question: str, messages: list):
         res = response.content
     # print("YOU : " question)
 
-    print("AI: ", res)
+    # print("AI: ", res)
     return {"messages": messages, "response": res}
 
 # if __name__ == "__main__":    
