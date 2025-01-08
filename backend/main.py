@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 
+import chatbot
+
 
 # Load environment variables from .env
 load_dotenv()
@@ -38,22 +40,15 @@ model = ChatGroq(model="llama3-8b-8192")
 async def root():
     return {"message": "Hello World"}
 
+with open("optimizedPrompt", "r") as f:
+    messages = []
+    prompt = f.read()
+
 @app.get("/askLLM/{question}")
-async def getLLMResponse(question:str):
-    messages = [
-        HumanMessage("You are a helpful intermediary chatbot for a hotel website. You have to answer question based on their query. Feel free to ask question to user if there is any doubt."),
-        # HumanMessage(question),
-    ]
-    result = executeQuery.run(question)
-    query = executeQuery.write_query({"question":question})["query"]
-    queryRes = executeQuery.execute_query({"query":query})
-    responseToUser = executeQuery.generate_answer({"question":question, "query": query, "result": queryRes})
+async def getLLMResponse(question: str, messages: list) -> dict:
+    if len(messages) == 0:
+        messages.append(HumanMessage(prompt))
 
-    model.invoke(messages)
-        
-    # print(query, "query") 
-    # print(responseToUser)
-    # print(result, "result")
+    response = chatbot.chatbot(question, messages)
 
-    return {"result": result[2]}
-    return responseToUser
+    return {"messages": messages, "response": response}

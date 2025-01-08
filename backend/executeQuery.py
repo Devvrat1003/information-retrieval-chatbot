@@ -26,7 +26,6 @@ class State(TypedDict):
 # # connecting to SQL database
 db = SQLDatabase.from_uri(os.environ.get("DATABASE_URI"))
 
-
 def validateQuery(sql_query: str):
     # Remove extra spaces and convert to lowercase for case-insensitivity
     sql_query = sql_query.strip().lower()
@@ -76,15 +75,14 @@ def write_query(state: State):
 
 def execute_query(state: State):
     """Execute SQL query."""
-    if(validateQuery(state["query"])):
-        execute_query_tool = QuerySQLDatabaseTool(db=db)
-        return {"result": execute_query_tool.invoke(state["query"])}
-    return {"error": "invalid query, trying to edit db. Aborting!"}
+    # if(validateQuery(state["query"])):
+    execute_query_tool = QuerySQLDatabaseTool(db=db)
+    return {"result": execute_query_tool.invoke(state["query"])}
 
 def generate_answer(state:State):
     """Answer question using retrieved information as context."""
     prompt = (
-        "Given the following user question, corresponding SQL query, "
+        "You are a helpful intermediary chatbot for a hotel website. You have to answer question based on their query. Feel free to ask question to user if there is any doubt. Given the following user question, corresponding SQL query, "
         "and SQL result, answer the user question, in a way human would answer. The user does not need to know what he asked, what was SQL query or if we are even using anything. Only generate the required answer.\n\n"
         f'Question: {state["question"]}\n'
         f'SQL Query: {state["query"]}\n'

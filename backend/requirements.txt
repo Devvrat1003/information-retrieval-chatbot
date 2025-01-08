@@ -3,6 +3,7 @@ fastapi[standard]
 langchain_community
 langchain_core
 langchain_groq
+langgraph
 uvicorn
 pydantic
 psycopg2-binary
