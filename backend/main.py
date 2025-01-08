@@ -13,7 +13,7 @@ from pydantic import BaseModel
 import chatbot
 
 # Load environment variables from .env
-load_dotenv()
+# load_dotenv()
 
 app = FastAPI()
 

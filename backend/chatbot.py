@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import re
 
-load_dotenv()
+# load_dotenv()
 
 model = ChatGroq(model="llama3-70b-8192")
 

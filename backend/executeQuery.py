@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 import re
 
-load_dotenv()
+# load_dotenv()
 
 if not os.environ.get("GROQ_API_KEY"):
   os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
