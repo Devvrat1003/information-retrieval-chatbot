@@ -69,16 +69,18 @@ def extract_sql_query(text):
     return None
 
 def chatbot(question: str, messages: list):
-    messages.append(HumanMessage(ques))
+    print("------------------------------------- inside chatbot -----------------------------------------")
+    messages.append(HumanMessage(question))
 
+    print("YOU : ", question)
     response = model.invoke(messages)
 
     isSqlQuery = extract_sql_query(response.content)
 
     res = 'error'
 
+    print("\n ----------------------------------------------\n", isSqlQuery, "\n---------------------------------------------\n")
     if isSqlQuery:
-        # print(isSqlQuery, "isSQL ---------------------------------------------")
         result = executeQuery.execute_query({"query": isSqlQuery})
         responseDB = executeQuery.generate_answer({"question": question, "query": isSqlQuery, "result" : result})
         messages.append(AIMessage(responseDB["answer"]))
@@ -87,26 +89,27 @@ def chatbot(question: str, messages: list):
     else: 
         messages.append(AIMessage(response.content))
         res = response.content
+    # print("YOU : " question)
 
     print("AI: ", res)
-    return res
+    return {"messages": messages, "response": res}
 
-if __name__ == "__main__":
+# if __name__ == "__main__":    
 
-    # with open ("singleHotelPrompt", "r") as f:
-    with open ("optimizedPrompt", "r") as f:
-        prompt = f.read()
-    messages = [
-        HumanMessage(prompt),
-    ]
+#     # with open ("singleHotelPrompt", "r") as f:
+#     with open ("optimizedPrompt", "r") as f:
+#         prompt = f.read()
+#     messages = [
+#         HumanMessage(prompt),
+#     ]
 
-    while(True):
-        # choice = input("")
-        ques = input("You: ");
+#     while(True):
+#         # choice = input("")
+#         ques = input("You: ");
 
-        if(ques == "exit"): break
-        elif(ques == "history"):
-            print("history : \n", messages, "\n")
+#         if(ques == "exit"): break
+#         elif(ques == "history"):
+#             print("history : \n", messages, "\n")
 
-        else: 
-            chatbot(ques, messages)
+#         else: 
+#             chatbot(ques, messages)

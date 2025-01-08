@@ -61,3 +61,11 @@ response_text TEXT,
 query_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );```
+
+
+Data Manipulation Queries:
+If the user asks to get some sensitive information from database, Abort and respond with a message that you cannot provide the details. Do not in any way provide sensitive information to user from DB.
+
+If the query involves inserting or updating data, ask the user first for all the required details:
+Do not attempt to generate values for columns you don't have information about.
+

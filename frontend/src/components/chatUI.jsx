@@ -1,33 +1,38 @@
+// 0
+
+import { useEffect, useRef } from "react";
+
 export default function ChatUI(props) {
-    const chats = props.chat;
+    const messages = props.messages;
+    const chatContainerRef = useRef(null); // Ref for the chat container
+
+    // Scroll to the bottom whenever the messages array changes
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop =
+                chatContainerRef.current.scrollHeight;
+        }
+    }, [messages]); // Dependency on messages to trigger the effect when they change
+
     return (
-        <div className="flex flex-col w-full border border-black gap-2 p-2 rounded overflow-y-scroll">
-            {chats.map((msg, index) => {
+        <div
+            ref={chatContainerRef} // Attach the ref to the container
+            className="overflow-y-scroll flex flex-col w-full border border-black gap-2 p-2 rounded flex-grow justify-start"
+        >
+            {messages.map((msg, index) => {
                 return (
                     <div
                         className={`w-fit max-w-[60%] ${
-                            index % 2 == 0 && "bg-[#a6b44e] self-end"
-                        } ${
-                            index % 2 == 1 && "bg-green-800 self-start"
+                            index === 0 && "hidden"
+                        } ${index % 2 === 0 && "bg-green-300 self-start"} ${
+                            index % 2 === 1 && "bg-blue-300 self-end"
                         } px-2 py-1 rounded`}
                         key={index}
                     >
-                        {msg}
+                        {msg.content}
                     </div>
                 );
             })}
         </div>
     );
-}
-{
-    /* <div
-                        className={`w-fit max-w-[60%] ${
-                            index % 2 == 0 && "bg-[#a6b44e] self-end"
-                        } ${
-                            index % 2 == 1 && "bg-green-800 self-start"
-                        } px-2 py-1 rounded`}
-                        key={index}
-                    >
-                        {msg}
-                    </div> */
 }

@@ -4,23 +4,35 @@ import ChatUI from "./components/chatUI";
 import Navbar from "./components/navbar";
 
 function App() {
-    const [chat, setChat] = useState([]);
+    const [messages, setMessages] = useState([]);
     const [question, setQuestion] = useState("");
 
+    const [item, setItem] = useState({ messages: [], question: "" });
+
     const getResult = async () => {
-        if (question === "") {
+        if (item.question === "") {
             alert("Uh Oh! You forgot to ask a question");
             return;
         }
         try {
+            setItem({ ...item, question: question });
+            console.log(messages, "before");
             const res = await fetch(
-                "https://information-retrieval-chatbot.onrender.com/askLLM/" +
-                    question
+                // "https://information-retrieval-chatbot.onrender.com/askLLM/" +
+                "http://127.0.0.1:8000/askLLM",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(item),
+                }
             );
-
             let ans = await res.json();
-
-            setChat([...chat, question, ans]);
+            // setMessages([...messages, question, ans.response]);
+            // setMessages(ans.messages);
+            setItem({ ...item, messages: ans.messages });
+            console.log(ans);
         } catch (error) {
             console.log("error", error);
             return;
@@ -28,30 +40,38 @@ function App() {
     };
 
     return (
-        <div className="w-screen h-screen px-96 py-4 flex flex-col justify-between bg-[#b0bd8c]">
-            <div className="flex flex-col items-center justify-between gap-4">
-                <Navbar></Navbar>
-                <ChatUI chat={chat} />
-            </div>
-            <div className="flex gap-2 h-fit w-full">
+        <div className="w-screen h-screen px-96 py-4 flex flex-col justify-between items-center gap-4">
+            {/* <div className="h-full flex flex-col flex-grow items-center justify-between gap-4"> */}
+            <Navbar></Navbar>
+            <ChatUI messages={item.messages} />
+            <div className="flex gap-2  w-full">
                 <input
                     className="outline-none border border-black p-2 rounded w-full font-mono bg-transparent "
                     type="text"
                     onKeyDown={(e) => {
-                        if (e.key == "Enter") getResult();
+                        if (e.key == "Enter") {
+                            getResult();
+                            e.target.value = "";
+                            // this.value = "";
+                        }
                     }}
                     onChange={(e) => {
-                        setQuestion(e.target.value);
+                        // setQuestion(e.target.value);
+                        setItem({ ...item, question: e.target.value });
                     }}
                 />
 
                 <button
-                    onClick={getResult}
+                    onClick={(e) => {
+                        getResult();
+                        e.target.previousElementSibling.value = "";
+                    }}
                     className="w-28 p-2 border border-black rounded hover:bg-[#b0bd7c] font-serif"
                 >
                     Ask Groq
                 </button>
             </div>
+            {/* </div> */}
         </div>
     );
 }

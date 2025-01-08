@@ -8,9 +8,9 @@ import executeQuery
 from dotenv import load_dotenv
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
-
+from pydantic import BaseModel
+# from fastapi import Request
 import chatbot
-
 
 # Load environment variables from .env
 load_dotenv()
@@ -19,6 +19,8 @@ app = FastAPI()
 
 origins = [
     "http://localhost:5173",
+    "http://localhost:5173/",
+    "http://localhost/",
     "https://information-retriever-chatbot.netlify.app"
 ]
 
@@ -33,8 +35,7 @@ app.add_middleware(
 if not os.environ.get("GROQ_API_KEY"):
     os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
 
-model = ChatGroq(model="llama3-8b-8192")
-
+model = ChatGroq(model="llama3-70b-8192")
 
 @app.get("/")
 async def root():
@@ -44,11 +45,18 @@ with open("optimizedPrompt", "r") as f:
     messages = []
     prompt = f.read()
 
-@app.get("/askLLM/{question}")
-async def getLLMResponse(question: str, messages: list) -> dict:
-    if len(messages) == 0:
-        messages.append(HumanMessage(prompt))
+class Item(BaseModel):
+    messages: list
+    question: str
 
-    response = chatbot.chatbot(question, messages)
+@app.post("/askLLM/")
+async def getLLMResponse(data: Item):
+    # print(data)
+    # return data
+    # return {"hehe" : "asds"}
+    if len(data.messages) == 0:
+        data.messages.append(HumanMessage(prompt))
 
-    return {"messages": messages, "response": response}
+    response = chatbot.chatbot(data.question, data.messages)
+    # print(data.messages)
+    return response
