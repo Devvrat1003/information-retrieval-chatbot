@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 export default function ChatUI(props) {
-    const messages = props.messages;
+    const messages = props;
     const chatContainerRef = useRef(null); // Ref for the chat container
 
     // Scroll to the bottom whenever the messages array changes

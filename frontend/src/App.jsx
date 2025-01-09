@@ -18,15 +18,15 @@ function App() {
             setItem({ ...item, question: question });
             console.log(messages, "before");
             const res = await fetch(
-                "https://information-retrieval-chatbot.onrender.com/askLLM/" +
-                    // "http://127.0.0.1:8000/askLLM",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(item),
-                    }
+                "https://information-retrieval-chatbot.onrender.com/askLLM",
+                // "http://127.0.0.1:8000/askLLM",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(item),
+                }
             );
             let ans = await res.json();
             // setMessages([...messages, question, ans.response]);
@@ -43,7 +43,22 @@ function App() {
         <div className="w-screen h-screen px-96 py-4 flex flex-col justify-between items-center gap-4">
             {/* <div className="h-full flex flex-col flex-grow items-center justify-between gap-4"> */}
             <Navbar></Navbar>
-            <ChatUI messages={item.messages} />
+            <div className="overflow-y-scroll flex flex-col w-full border border-black gap-2 p-2 rounded flex-grow justify-start">
+                {item.messages.map((msg, index) => {
+                    return (
+                        <div
+                            className={`w-fit max-w-[60%] ${
+                                index === 0 && "hidden"
+                            } ${index % 2 === 0 && "bg-green-300 self-start"} ${
+                                index % 2 === 1 && "bg-blue-300 self-end"
+                            } px-2 py-1 rounded`}
+                            key={index}
+                        >
+                            {msg.content}
+                        </div>
+                    );
+                })}
+            </div>
             <div className="flex gap-2  w-full">
                 <input
                     className="outline-none border border-black p-2 rounded w-full font-mono bg-transparent "

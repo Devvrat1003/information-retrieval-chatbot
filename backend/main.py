@@ -9,11 +9,11 @@ from dotenv import load_dotenv
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 from pydantic import BaseModel
-# from fastapi import Request
+from fastapi import Request
 import chatbot
 
 # Load environment variables from .env
-# load_dotenv()
+load_dotenv()
 
 app = FastAPI()
 
@@ -51,11 +51,13 @@ class Item(BaseModel):
     question: str
 
 @app.post("/askLLM/")
-async def getLLMResponse(data: Item):
+async def getLLMResponse(request: Request):
+    data = await request.json()
 
-    if len(data.messages) == 0:
-        data.messages.append(HumanMessage(prompt))
+    # print(data)
+    if len(data["messages"]) == 0:
+        data["messages"].append(HumanMessage(prompt))
 
-    response = chatbot.chatbot(data.question, data.messages)
+    response = chatbot.chatbot(data["question"], data["messages"])
     # print(data.messages)
     return response
