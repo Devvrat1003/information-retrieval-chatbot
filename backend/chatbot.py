@@ -76,7 +76,7 @@ def chatbot(question: str, messages: list):
 
     res = 'nothing'
 
-    # print("\n ----------------------------------------------\n", isSqlQuery, "\n---------------------------------------------\n")
+    print("\n ----------------------------------------------\n", isSqlQuery, "\n---------------------------------------------\n")
     if isSqlQuery:
         result = executeQuery.execute_query({"query": isSqlQuery})
         responseDB = executeQuery.generate_answer({"question": question, "query": isSqlQuery, "result" : result})
@@ -88,13 +88,13 @@ def chatbot(question: str, messages: list):
         res = response.content
     # print("YOU : " question)
 
-    # print("AI: ", res)
+    print("AI: ", res)
     return {"messages": messages, "response": res}
 
 # if __name__ == "__main__":    
 
 #     # with open ("singleHotelPrompt", "r") as f:
-#     with open ("optimizedPrompt", "r") as f:
+#     with open ("readOnlyPrompt.txt", "r") as f:
 #         prompt = f.read()
 #     messages = [
 #         HumanMessage(prompt),

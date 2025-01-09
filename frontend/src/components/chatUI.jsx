@@ -1,5 +1,3 @@
-// 0
-
 import { useEffect, useRef } from "react";
 
 export default function ChatUI(props) {
@@ -24,8 +22,8 @@ export default function ChatUI(props) {
                     <div
                         className={`w-fit max-w-[60%] ${
                             index === 0 && "hidden"
-                        } ${index % 2 === 0 && "bg-green-300 self-start"} ${
-                            index % 2 === 1 && "bg-blue-300 self-end"
+                        } ${index % 2 === 1 && "bg-green-300 self-start"} ${
+                            index % 2 === 0 && "bg-blue-300 self-end"
                         } px-2 py-1 rounded`}
                         key={index}
                     >

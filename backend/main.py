@@ -42,7 +42,7 @@ model = ChatGroq(model="llama3-70b-8192")
 async def root():
     return {"message": "Hello World"}
 
-with open("optimizedPrompt", "r") as f:
+with open("singleHotelPrompt", "r") as f:
     messages = []
     prompt = f.read()
 
@@ -54,10 +54,9 @@ class Item(BaseModel):
 async def getLLMResponse(request: Request):
     data = await request.json()
 
-    # print(data)
     if len(data["messages"]) == 0:
         data["messages"].append(HumanMessage(prompt))
+        data["messages"].append(AIMessage("Hello, welcome to Swaroop Vilas Hotel"))
 
     response = chatbot.chatbot(data["question"], data["messages"])
-    # print(data.messages)
     return response

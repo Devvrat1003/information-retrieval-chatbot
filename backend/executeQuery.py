@@ -60,16 +60,16 @@ class QueryOutput(TypedDict):
     query: Annotated[str, ..., "Syntactically valid SQL query."]
 
 # reading table schema
-with open("singleHotelPrompt", 'r') as file:
-    getPrompt = file.read()
+# with open("singleHotelPrompt", 'r') as file:
+#     getPrompt = file.read()
 
 # get query from question
-def write_query(state: State):
-    """Generate SQL query to fetch information."""
-    prompt = getPrompt + "\nQuestion: " + state["question"]
-    structured_llm = llm.with_structured_output(QueryOutput)
-    result = structured_llm.invoke(prompt)
-    return {"query": result["query"]}
+# def write_query(state: State):
+#     """Generate SQL query to fetch information."""
+#     prompt = getPrompt + "\nQuestion: " + state["question"]
+#     structured_llm = llm.with_structured_output(QueryOutput)
+#     result = structured_llm.invoke(prompt)
+#     return {"query": result["query"]}
 
 def execute_query(state: State):
     """Execute SQL query."""
