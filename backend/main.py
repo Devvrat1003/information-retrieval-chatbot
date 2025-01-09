@@ -21,7 +21,8 @@ origins = [
     "http://localhost:5173",
     "http://localhost:5173/",
     "http://localhost/",
-    "https://information-retriever-chatbot.netlify.app"
+    "https://information-retriever-chatbot.netlify.app",
+    "https://information-retriever-chatbot.netlify.app/"
 ]
 
 app.add_middleware(
@@ -51,9 +52,7 @@ class Item(BaseModel):
 
 @app.post("/askLLM/")
 async def getLLMResponse(data: Item):
-    # print(data)
-    # return data
-    # return {"hehe" : "asds"}
+
     if len(data.messages) == 0:
         data.messages.append(HumanMessage(prompt))
 
