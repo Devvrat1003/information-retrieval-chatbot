@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./index.css";
 import ChatUI from "./components/chatUI";
 import Navbar from "./components/navbar";
@@ -38,12 +38,25 @@ function App() {
             return;
         }
     };
+    const chatContainerRef = useRef(null); // Ref for the chat container
+
+    // Scroll to the bottom whenever the messages array changes
+    // useEffect(() => {
+    //     if (chatContainerRef.current) {
+    //         chatContainerRef.current.scrollTop =
+    //             chatContainerRef.current.scrollHeight;
+    //     }
+    // }, [messages]); // Dependency on messages to trigger the effect when they change
 
     return (
         <div className="w-screen h-screen px-96 py-4 flex flex-col justify-between items-center gap-4">
             {/* <div className="h-full flex flex-col flex-grow items-center justify-between gap-4"> */}
             <Navbar></Navbar>
-            <div className="overflow-y-scroll flex flex-col w-full border border-black gap-2 p-2 rounded flex-grow justify-start">
+            <ChatUI messages={item.messages} />
+            {/* <div
+                ref={chatContainerRef}
+                className="overflow-y-scroll flex flex-col w-full border border-black gap-2 p-2 rounded flex-grow justify-start"
+            >
                 {item.messages.map((msg, index) => {
                     return (
                         <div
@@ -58,7 +71,7 @@ function App() {
                         </div>
                     );
                 })}
-            </div>
+            </div> */}
             <div className="flex gap-2  w-full">
                 <input
                     className="outline-none border border-black p-2 rounded w-full font-mono bg-transparent "
