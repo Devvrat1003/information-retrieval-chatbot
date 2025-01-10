@@ -1,8 +1,9 @@
 import React from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, CSSProperties } from "react";
 import "../index.css";
 import ChatUI from "../components/chatUI";
 import Navbar from "../components/navbar";
+import ReactMarkdown from "react-markdown";
 
 export default function Chatbot() {
     const [messages, setMessages] = useState([]);
@@ -12,17 +13,21 @@ export default function Chatbot() {
 
     const [item, setItem] = useState({ messages: [], question: "" });
 
+    let [loading, setLoading] = useState(false);
+    let [color, setColor] = useState("#ffffff");
+
     const getResult = async () => {
         if (item.question === "") {
             alert("Uh Oh! You forgot to ask a question");
             return;
         }
         try {
+            setLoading(true);
             setItem({ ...item, question: question });
             console.log(messages, "before");
             const res = await fetch(
-                "https://information-retrieval-chatbot.onrender.com/askLLM",
-                // "http://127.0.0.1:8000/askLLM",
+                // "https://information-retrieval-chatbot.onrender.com/askLLM",
+                "http://127.0.0.1:8000/askLLM",
                 {
                     method: "POST",
                     headers: {
@@ -35,40 +40,28 @@ export default function Chatbot() {
             // setMessages([...messages, question, ans.response]);
             // setMessages(ans.messages);
             setItem({ ...item, messages: ans.messages });
-
-            React.render(<Speech text="Welcome to react speech" />);
-
             console.log(ans);
+            setLoading(false);
         } catch (error) {
             console.log("error", error);
             return;
         }
     };
 
+    const newChat = () => {
+        setItem({ messages: [], question: "" });
+    };
+
     return (
         <div className="w-screen h-screen px-96 py-4 flex flex-col justify-between items-center gap-4">
             {/* <div className="h-full flex flex-col flex-grow items-center justify-between gap-4"> */}
             <Navbar></Navbar>
-            <ChatUI messages={item.messages} />
-            {/* <div
-                ref={chatContainerRef}
-                className="overflow-y-scroll flex flex-col w-full border border-black gap-2 p-2 rounded flex-grow justify-start"
-            >
-                {item.messages.map((msg, index) => {
-                    return (
-                        <div
-                            className={`w-fit max-w-[60%] ${
-                                index === 0 && "hidden"
-                            } ${index % 2 === 0 && "bg-green-300 self-start"} ${
-                                index % 2 === 1 && "bg-blue-300 self-end"
-                            } px-2 py-1 rounded`}
-                            key={index}
-                        >
-                            {msg.content}
-                        </div>
-                    );
-                })}
-            </div> */}
+            <ChatUI
+                messages={item.messages}
+                loading={loading}
+                question={question}
+            />
+
             <div className="flex gap-2  w-full">
                 <input
                     className="outline-none border border-black p-2 rounded w-full font-mono bg-transparent "
@@ -76,12 +69,14 @@ export default function Chatbot() {
                     onKeyDown={(e) => {
                         if (e.key == "Enter") {
                             getResult();
+                            setQuestion(e.target.value);
                             e.target.value = "";
                             // this.value = "";
                         }
                     }}
                     onChange={(e) => {
                         // setQuestion(e.target.value);
+                        setQuestion(e.target.value);
                         setItem({ ...item, question: e.target.value });
                     }}
                 />
@@ -94,6 +89,12 @@ export default function Chatbot() {
                     className="w-28 p-2 border border-black rounded hover:bg-[#b0bd7c] font-serif"
                 >
                     Ask Groq
+                </button>
+                <button
+                    onClick={newChat}
+                    className="w-28 p-2 border border-black rounded hover:bg-[#b0bd7c] font-serif"
+                >
+                    New Chat
                 </button>
             </div>
             {/* </div> */}

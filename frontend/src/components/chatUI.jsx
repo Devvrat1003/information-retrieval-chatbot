@@ -1,12 +1,11 @@
 import { useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
-
-// const AIResponse = ({ response }) => {
-//     return;
-// };
+import { ThreeDots } from "react-loader-spinner";
 
 export default function ChatUI(props) {
     const messages = props.messages;
+    const loading = props.loading;
+    const question = props.question;
     const chatContainerRef = useRef(null); // Ref for the chat container
 
     // Scroll to the bottom whenever the messages array changes
@@ -15,7 +14,7 @@ export default function ChatUI(props) {
             chatContainerRef.current.scrollTop =
                 chatContainerRef.current.scrollHeight;
         }
-    }, [messages]); // Dependency on messages to trigger the effect when they change
+    }, [messages, loading, question]); // Dependency on messages to trigger the effect when they change
 
     return (
         <div
@@ -37,6 +36,23 @@ export default function ChatUI(props) {
                     </div>
                 );
             })}
+            {loading ? (
+                <div className="w-full flex flex-col">
+                    <p className="w-fit max-w-[60%] bg-blue-300 self-end px-2 py-1 rounded">
+                        {question}
+                    </p>
+                    <ThreeDots
+                        visible={true}
+                        height="30"
+                        width="30"
+                        color="#4fa94d"
+                        radius="9"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                    />
+                </div>
+            ) : null}
         </div>
     );
 }
