@@ -1,4 +1,9 @@
 import { useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
+
+// const AIResponse = ({ response }) => {
+//     return;
+// };
 
 export default function ChatUI(props) {
     const messages = props.messages;
@@ -27,7 +32,8 @@ export default function ChatUI(props) {
                         } px-2 py-1 rounded`}
                         key={index}
                     >
-                        {msg.content}
+                        {/* {msg.content} */}
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
                     </div>
                 );
             })}
