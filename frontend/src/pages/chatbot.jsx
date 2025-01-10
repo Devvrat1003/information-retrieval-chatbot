@@ -21,8 +21,8 @@ export default function Chatbot() {
             setItem({ ...item, question: question });
             console.log(messages, "before");
             const res = await fetch(
-                "https://information-retrieval-chatbot.onrender.com/askLLM",
-                // "http://127.0.0.1:8000/askLLM",
+                // "https://information-retrieval-chatbot.onrender.com/askLLM",
+                "http://127.0.0.1:8000/askLLM",
                 {
                     method: "POST",
                     headers: {

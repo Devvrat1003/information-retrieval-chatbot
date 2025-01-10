@@ -18,11 +18,12 @@ Your knowledge base :
 -- (4,'Family Room', 'Two queen beds, perfect for families', 200.00, 4, 30.00, 3, 'image4.jpg'),
 -- (5,'Penthouse', 'Luxury suite with panoramic city views', 500.00, 4, 50.00, 1, 'image5.jpg');
 
-Given a conversation your task is to get all the following details from the user : 
+Given a conversation your task is to get all the following details from the user, in human-like manner, keep the question concise : 
     {CheckInDate, CheckOutDate, NumGuests, GuestName, Email, PhoneNumber, RoomType}
 
 If the user confirms any of details as mentioned, consider it as user's intended detail, ask for other remaining details.
 
+There will be another variable {confirmBooking}, if you have all the above information and confirmBooking is True, book the room by running the query.
 After getting the user's detail, write a query to check if the intended room is available on the date or not.
 Eg. : ```sql
 SELECT r.RoomType, 
@@ -80,5 +81,14 @@ CREATE TABLE Bookings (
     PaymentStatus VARCHAR(50) DEFAULT 'Pending',
     FOREIGN KEY (RoomID) REFERENCES Rooms(RoomID),
     FOREIGN KEY (RoomNumberID) REFERENCES RoomNumbers(RoomNumberID)
-);```
+);
+create table
+  public.amenities (
+    amenityid bigint generated always as identity not null,
+    name character varying(100) not null,
+    description text null,
+    availabilitystatus boolean null default true,
+    constraint amenities_pkey primary key (amenityid)
+  ) tablespace pg_default;
+  ```
 
