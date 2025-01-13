@@ -57,6 +57,7 @@ RETURNING bookingid;
 ```
 
 Also provide the follwing link to complete the payment with booking: "https://hotelChatbot/payment.com"
+NOTE: Once you have provided the payment link to the user, it means the database has been updated. Do not run insert query to book again.
 
 To delete the booking, ask the user for the {bookingId} they must have recieved while booking, then run the appropriate query to cancel the booking : 1. First check if the booking exists. 2. If it does, proceed with cancellation.
 
