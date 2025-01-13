@@ -1,97 +1,44 @@
-# from langchain_community.utilities import SQLDatabase
-# import os
-# from dotenv import load_dotenv
-# import chatbot
+import getpass
+import os
+from langchain_core.tools import tool
 
-# load_dotenv()
+if not os.environ.get("GROQ_API_KEY"):
+  os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
 
-# db = SQLDatabase.from_uri(os.environ.get("DATABASE_URI"))
+from langchain_groq import ChatGroq
 
-# query = "sdhflsdkjf dkfhsdc sdlifh  SELECT r.RoomType, r.TotalRooms - COALESCE(SUM(b.NumRooms), 0) AS AvailableRooms FROM Rooms r LEFT JOIN Bookings b ON r.RoomID = b.RoomID AND ((b.CheckInDate BETWEEN '2025-01-10' AND '2025-01-15') OR (b.CheckOutDate BETWEEN 2025-01-10' AND '2025-01-15') OR (b.CheckInDate <= '2025-01-10' AND b.CheckOutDate >= '2025-01-15')) WHERE r.RoomType = 'Deluxe Room' GROUP BY r.RoomID, r.RoomType, r.TotalRooms HAVING r.TotalRooms - COALESCE(SUM(b.NumRooms), 0) > 0; skjsdgfdjhh select * from rooms; "
+from typing_extensions import Annotated, TypedDict
+from pydantic import BaseModel
 
-# text = """
-# Here is some text with an SQL query:
-# SELECT * FROM users WHERE id = 1;
-# And here's another:
-# INSERT INTO users (name, email) VALUES ('John Doe', 'john@example.com');
-# """
-# # print(db.run(query))
-# print(chatbot.extract_sql_query(text))
-import re
+model = ChatGroq(model="llama-3.3-70b-versatile")
 
-def extract_sql_queries(text):
-    """
-    Extracts SQL queries from a given text.
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
-    Parameters:
-        text (str): The input text containing SQL queries.
+messages = [SystemMessage("Remove any SQL queries and return user details, confirmation details, payment link,  from the following two messages of AI. Return the revised message only.")]
 
-    Returns:
-        list: A list of extracted SQL queries.
-    """
-    queries = ["SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "DROP", "ALTER", "WITH"]
-    # queries = ["select", "insert", "update", "delete", "create, , "drop", "alter", "with"]
-    # curr = text.split()
-    # for i in range(len(curr)):
-    #     curr[i] = curr[i].lower()
-    
-    # print(curr)
-    # for i in range(len(curr)):
-    #     if isQuery:
-    #         currQuery += curr[i]
-    #         # print(currQuery)
-        
-    #     elif ';' in curr[i]:
-    #         print(curr[i], "with ;")
-    #         currQuery += curr[i]
-    #         res.append(currQuery)
-    #         isQuery = False
-    #         currQuery = ""
-        
-    #     else:
-    #         for j in queries:
-    #             if j in curr[i]:
-    #                 print(curr[i], "this ran")
-    #                 isQuery = True
-    #                 currQuery += j
-    #                 break
-    text.lower()
-    conditions = ["```", "```sql"]
-    sql = ""
-    # for i in range(len(conditions)):
-    if text.find("```sql"):
-        i = text.find("```sql") + 6
-    else: 
-        i = text.find("```") + 3
+messages.append(AIMessage("""I'll go ahead and book the Suite for you.
+Here's the booking details:
 
-    start = i
-
-    # print(text[start::])
-    temp = text[start::]
-    end = temp[::-1].find("```")
-
-    end = len(temp) - end
-    print(text[start:end + 3])
-    # print(text[start:end + 1])
-    # sql += text[start:end + 3]
-    # return sql
-# Example usage
-text = """
 ```sql
-SELECT r.RoomType, 
-       r.TotalRooms - COALESCE(SUM(b.NumRooms), 0) AS AvailableRooms
-FROM Rooms r
-LEFT JOIN Bookings b
-    ON r.RoomID = b.RoomID
-    AND ((b.CheckInDate BETWEEN '2025-01-29' AND '2025-01-31')
-         OR (b.CheckOutDate BETWEEN '2025-01-29' AND '2025-01-31')
-         OR (b.CheckInDate <= '2025-01-29' AND b.CheckOutDate >= '2025-01-31'))
-WHERE r.RoomType = 'Deluxe Room' 
-GROUP BY r.RoomID, r.RoomType, r.TotalRooms
-HAVING r.TotalRooms - COALESCE(SUM(b.NumRooms), 0) > 0;
-```dffgdfh
-"""
-queries = extract_sql_queries(text)
-print(queries, "sql")
+INSERT INTO bookings (guestname, email, phonenumber, checkindate, checkoutdate, roomid, numrooms, numguests, totalamount)
+VALUES ('user42', 'user42@gmail.com', '9393939393', '2025-02-06', '2025-02-07',
+         (SELECT roomid FROM rooms WHERE roomtype = 'Suite'), 1, 3, 300.00)
+RETURNING bookingid;
+```
+Your booking has been successfully created. You will receive a booking ID shortly.
 
+To complete the payment, please click on this link: "https://artificialanalysis.ai/leaderboards/models"
+
+Your booking ID is: **[Insert Booking ID here]**
+
+Please note that your booking is pending payment. Once the payment is received, your booking will be confirmed.
+
+Is there anything else I can assist you with?
+"""))
+
+messages.append(AIMessage("Your booking has been successfully created! Your booking ID is 75. We have reserved a Suite for you from February 6th, 2025 to February 7th, 2025. We're looking forward to welcoming you to our hotel!"))
+
+res = model.invoke(messages)
+print(res)
+print(res.content)
 

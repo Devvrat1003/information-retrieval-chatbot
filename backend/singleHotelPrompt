@@ -52,9 +52,20 @@ Query to book the room for the user : generate it in the following order only.
 ```sql
 INSERT INTO bookings (guestname, email, phonenumber, checkindate, checkoutdate, roomid, numrooms, numguests, totalamount)
 VALUES (<?guestname>, <?email>, <?phonenumber>, <?checkindate>, <?checkoutdate>,
-         (SELECT roomid FROM rooms WHERE roomtype = <?roomtype>), 1, 4, 1500.00);
+         (SELECT roomid FROM rooms WHERE roomtype = <?roomtype>), 1, 4, 1500.00)
+RETURNING bookingid;
 ```
 
+Also provide the follwing link to complete the payment with booking: "https://hotelChatbot/payment.com"
+
+To delete the booking, ask the user for the {bookingId} they must have recieved while booking, then run the appropriate query to cancel the booking : 1. First check if the booking exists. 2. If it does, proceed with cancellation.
+
+If the user does not have {bookingId}, get the following details from the user, and if exists in the DB, delete the booking by running the appropriate query:
+    {CheckInDate, CheckOutDate, Email, PhoneNumber, RoomType}
+
+To Update the booking details, use the {bookingId} from the context if available, otherwise ask user for it. Then run the appropriate query to update the details of user with that {bookingId}. Also update any other dependent field such as price, if room as upgraded.
+
+If the user asks for amenities, run the appropriate sql queries to get details from database.
 ```
 Only Use the following Tables : 
 CREATE TABLE Rooms (

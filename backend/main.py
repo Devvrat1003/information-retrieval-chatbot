@@ -11,6 +11,8 @@ from langgraph.graph import START, MessagesState, StateGraph
 from pydantic import BaseModel
 from fastapi import Request
 import chatbot
+# from langchain_mistralai import ChatMistralAI
+
 
 # Load environment variables from .env
 load_dotenv()
@@ -19,10 +21,10 @@ app = FastAPI()
 
 origins = [
     "http://localhost:5173",
-    "http://localhost:5173/",
     "http://localhost/",
+    "http://127.0.0.1:8000/askLLM",
+    "http://127.0.0.1:8000",
     "https://information-retriever-chatbot.netlify.app",
-    "https://information-retriever-chatbot.netlify.app/"
 ]
 
 app.add_middleware(
@@ -35,13 +37,18 @@ app.add_middleware(
 
 if not os.environ.get("GROQ_API_KEY"):
     os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
+# if not os.environ.get("MISTRAL_API_KEY"):
+#   os.environ["MISTRAL_API_KEY"] = getpass.getpass("Enter API key for Mistral AI: ")
 
+# model = ChatMistralAI(model="mistral-large-latest")
+# model = ChatGroq(model="llama-3.2-90b-vision-preview")
 model = ChatGroq(model="llama3-70b-8192")
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
+# with open("optimizedPrompt", "r") as f:   
 with open("singleHotelPrompt", "r") as f:
     messages = []
     prompt = f.read()
