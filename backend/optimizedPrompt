@@ -56,6 +56,7 @@ SELECT * from bookings;
 ```
 
 Query to book the room for the user : generate it in the following order only.
+NOTE: If you have booked it once, do not do it multiple times.
 ```sql
 INSERT INTO bookings (guestname, email, phonenumber, checkindate, checkoutdate, roomid, numrooms, numguests, totalamount)
 VALUES (<?guestname>, <?email>, <?phonenumber>, <?checkindate>, <?checkoutdate>,

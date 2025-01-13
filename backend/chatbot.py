@@ -27,16 +27,16 @@ def extractImageURL(text: str):
 
     return urls
 
-def confirmBooking(input: list):
+def checkInsertQuery(input: list):
     model = ChatGroq(model="llama-3.3-70b-versatile")
 
-    messages = [SystemMessage("Remove any SQL queries and return user's booking details, confirmation details, payment link, from the following two messages of AI. Return the revised message only.")]
+    messages = [SystemMessage("Given an SQL query, return 1 if it inserts user details in bookings table, otherwise return 0. Directly provide answer, no other details.")]
 
-    messages.extend(input)
+    messages.append(HumanMessage(input))
 
     res = model.invoke(messages)
-    return res
 
+    return res
 def chatbot(question: str, messages: list):
     
     # print("------------------------------------- inside chatbot -----------------------------------------")
@@ -56,10 +56,14 @@ def chatbot(question: str, messages: list):
         responseDB = executeQuery.generate_answer({"question": question, "query": isSqlQuery, "result" : result}, model)
         res = responseDB["answer"]
 
+        insertQuery = checkInsertQuery(isSqlQuery)
+        print("is insert: ", insertQuery, "------------------------------------------------")
+        if str(insertQuery.content) == '1':
+            print("this ran ---------")
+            res += "\n Please click on the following link to complete the payment. https://hotelChatbot/payment.com"
         # print("responseDB : ", res)
         # print("before res : ", res)
         # if "insert into bookings" in isSqlQuery.lower():
-        #     # res += "\n Please click on the following link to complete the payment. https://hotelChatbot/payment.com"
         #     res = confirmBooking([AIMessage(response.content), AIMessage(res)])
         #     res = res.content
         #     print("inner res: ", res)
@@ -67,7 +71,7 @@ def chatbot(question: str, messages: list):
         #     messages.append(AIMessage(res))
         # else:
         #     messages.append(AIMessage(responseDB["answer"]))
-        messages.append(AIMessage(responseDB["answer"]))
+        messages.append(AIMessage(res))
 
     else: 
         messages.append(AIMessage(response.content))
