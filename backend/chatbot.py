@@ -57,16 +57,17 @@ def chatbot(question: str, messages: list):
         res = responseDB["answer"]
 
         # print("responseDB : ", res)
-        print("before res : ", res)
-        if "insert into bookings" in isSqlQuery.lower():
-            # res += "\n Please click on the following link to complete the payment. https://hotelChatbot/payment.com"
-            res = confirmBooking([AIMessage(response.content), AIMessage(res)])
-            res = res.content
-            print("inner res: ", res)
-            print("------------------------------------------------")
-            messages.append(AIMessage(res))
-        else:
-            messages.append(AIMessage(responseDB["answer"]))
+        # print("before res : ", res)
+        # if "insert into bookings" in isSqlQuery.lower():
+        #     # res += "\n Please click on the following link to complete the payment. https://hotelChatbot/payment.com"
+        #     res = confirmBooking([AIMessage(response.content), AIMessage(res)])
+        #     res = res.content
+        #     print("inner res: ", res)
+        #     print("------------------------------------------------")
+        #     messages.append(AIMessage(res))
+        # else:
+        #     messages.append(AIMessage(responseDB["answer"]))
+        messages.append(AIMessage(responseDB["answer"]))
 
     else: 
         messages.append(AIMessage(response.content))
