@@ -77,7 +77,7 @@ def chatbot(question: str, messages: list):
 
 # if __name__ == "__main__":    
 
-#     with open ("optimizedPrompt", "r") as f:
+#     with open ("singleHotelPrompt", "r") as f:
 #     # with open ("readOnlyPrompt.txt", "r") as f:
 #         prompt = f.read()
 #     messages = [

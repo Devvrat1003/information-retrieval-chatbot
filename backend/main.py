@@ -61,7 +61,8 @@ class Item(BaseModel):
 async def getLLMResponse(request: Request):
     data = await request.json()
 
-    if len(data["messages"]) == 0:
+    if len(data["messages"]) == 1:
+        data["messages"] = []
         data["messages"].append(HumanMessage(prompt))
         data["messages"].append(AIMessage("Hello, welcome to Swaroop Vilas Hotel"))
 

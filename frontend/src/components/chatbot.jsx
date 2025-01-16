@@ -1,10 +1,12 @@
 import React from "react";
 import { useState, useRef, useEffect, CSSProperties } from "react";
-import "../index.css";
+import "../chatbotUI.css";
 import ChatUI from "./chatUI";
 import Navbar from "./navbar";
-import Speech from "./speech";
 import { IoMdSend } from "react-icons/io";
+import { useRecoilState } from "recoil";
+import { showChatState } from "../atom/chatState";
+import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
 
 export default function Chatbot() {
     const [messages, setMessages] = useState([]);
@@ -39,7 +41,7 @@ export default function Chatbot() {
     // });
 
     const [item, setItem] = useState({
-        messages: [],
+        messages: [{ content: "Hello, welcome to Swaroop Vilas Hotel" }],
         question: "",
         images: [],
     });
@@ -54,7 +56,6 @@ export default function Chatbot() {
         try {
             setLoading(true);
             setItem({ ...item, question: question });
-            // console.log(messages, "before");
             const res = await fetch(
                 // "https://information-retrieval-chatbot.onrender.com/askLLM",
                 "http://127.0.0.1:8000/askLLM",
@@ -79,18 +80,32 @@ export default function Chatbot() {
     };
 
     const newChat = () => {
-        setItem({ messages: [], question: "" });
+        setItem({
+            ...item,
+            messages: [{ content: "Hello, welcome to Swaroop Vilas Hotel" }],
+            question: "",
+            images: [],
+        });
     };
 
+    useEffect(() => {
+        setItem({
+            ...item,
+            messages: [{ content: "Hello, welcome to Swaroop Vilas Hotel" }],
+        });
+    }, []);
+
     return (
-        <div className="self-end ml-auto bg-white rounded text-sm flex flex-col justify-between items-center">
+        <div
+            className={`border border-black self-end ml-auto bg-white rounded text-sm flex flex-col justify-between items-center`}
+        >
             <Navbar></Navbar>
-            <div className="w-72 h-96 p-2 flex flex-col justify-between items-center gap-2">
+            <div className="w-72 h-96 p-2 flex flex-col justify-between items-center gap-2 rounded">
                 <ChatUI
-                    messages={item.messages}
+                    messages={item}
                     loading={loading}
                     question={question}
-                    images={item.images}
+                    images={item}
                 />
                 {/* <div>
                 {item.images[1].map((url, index) => {
@@ -100,6 +115,7 @@ export default function Chatbot() {
 
                 <div className="flex gap-2  w-full">
                     <input
+                        placeholder="Message..."
                         className="outline-none border border-black p-2 rounded w-full font-mono bg-transparent "
                         type="text"
                         onKeyDown={(e) => {
@@ -107,7 +123,6 @@ export default function Chatbot() {
                                 getResult();
                                 setQuestion(e.target.value);
                                 e.target.value = "";
-                                // this.value = "";
                             }
                         }}
                         onChange={(e) => {
@@ -117,22 +132,27 @@ export default function Chatbot() {
                         }}
                     />
 
+                    {/* <div className="flex gap-2 text-base [&>*]:text-center"> */}
                     <button
                         onClick={(e) => {
                             getResult();
                             e.target.previousElementSibling.value = "";
                         }}
-                        className="p-1 lg:p-2 border border-black rounded hover:bg-[#b0bd7c] font-serif flex items-center gap-2"
+                        className="w-fit p-2 justify-center border border-black rounded hover:bg-[#b0bd7c] font-serif flex items-center gap-2"
                     >
-                        Ask
+                        Send
                         <IoMdSend />
                     </button>
-                    <button
-                        onClick={newChat}
-                        className="w-28 p-1 border border-black rounded hover:bg-[#b0bd7c] font-serif"
-                    >
-                        New Chat
-                    </button>
+                    {/* <button
+                            onClick={() => {
+                                newChat();
+                                console.log(item, "item");
+                            }}
+                            className="w-1/2 p-1 border border-black rounded hover:bg-[#b0bd7c] font-serif"
+                        >
+                            New Chat
+                        </button> */}
+                    {/* </div> */}
                 </div>
             </div>
             {/* </div> */}
