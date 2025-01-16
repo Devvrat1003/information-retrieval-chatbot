@@ -145,12 +145,12 @@ export default function ChatUI(props) {
     return (
         <div
             ref={chatContainerRef} // Attach the ref to the container
-            className="overflow-y-scroll flex flex-col w-full border border-black gap-2 p-2 rounded flex-grow justify-start"
+            className="w-full overflow-y-scroll flex flex-col border border-black gap-2 p-2 rounded flex-grow justify-start"
         >
             {messages.map((msg, index) => {
                 return (
                     <div
-                        className={`w-fit max-w-[60%] ${
+                        className={`w-fit max-w-[75%] ${
                             index === 0 && "hidden"
                         } ${index % 2 === 1 && "bg-green-300 self-start"} ${
                             index % 2 === 0 && "bg-blue-300 self-end"

@@ -1,9 +1,10 @@
 import React from "react";
 import { useState, useRef, useEffect, CSSProperties } from "react";
 import "../index.css";
-import ChatUI from "../components/chatUI";
-import Navbar from "../components/navbar";
-import Speech from "../components/speech";
+import ChatUI from "./chatUI";
+import Navbar from "./navbar";
+import Speech from "./speech";
+import { IoMdSend } from "react-icons/io";
 
 export default function Chatbot() {
     const [messages, setMessages] = useState([]);
@@ -55,8 +56,8 @@ export default function Chatbot() {
             setItem({ ...item, question: question });
             // console.log(messages, "before");
             const res = await fetch(
-                "https://information-retrieval-chatbot.onrender.com/askLLM",
-                // "http://127.0.0.1:8000/askLLM",
+                // "https://information-retrieval-chatbot.onrender.com/askLLM",
+                "http://127.0.0.1:8000/askLLM",
                 {
                     method: "POST",
                     headers: {
@@ -82,55 +83,57 @@ export default function Chatbot() {
     };
 
     return (
-        <div className="w-screen h-screen px-[5%] text-sm sm:text-base sm:px-[15%] lg:px-[20%] py-4 flex flex-col justify-between items-center gap-4">
-            {/* <div className="h-full flex flex-col flex-grow items-center justify-between gap-4"> */}
+        <div className="self-end ml-auto bg-white rounded text-sm flex flex-col justify-between items-center">
             <Navbar></Navbar>
-            <ChatUI
-                messages={item.messages}
-                loading={loading}
-                question={question}
-                images={item.images}
-            />
-            {/* <div>
+            <div className="w-72 h-96 p-2 flex flex-col justify-between items-center gap-2">
+                <ChatUI
+                    messages={item.messages}
+                    loading={loading}
+                    question={question}
+                    images={item.images}
+                />
+                {/* <div>
                 {item.images[1].map((url, index) => {
                     return <img src={url} alt="Image urls" />;
                 })}
             </div> */}
 
-            <div className="flex gap-2  w-full">
-                <input
-                    className="outline-none border border-black p-2 rounded w-full font-mono bg-transparent "
-                    type="text"
-                    onKeyDown={(e) => {
-                        if (e.key == "Enter") {
-                            getResult();
+                <div className="flex gap-2  w-full">
+                    <input
+                        className="outline-none border border-black p-2 rounded w-full font-mono bg-transparent "
+                        type="text"
+                        onKeyDown={(e) => {
+                            if (e.key == "Enter") {
+                                getResult();
+                                setQuestion(e.target.value);
+                                e.target.value = "";
+                                // this.value = "";
+                            }
+                        }}
+                        onChange={(e) => {
+                            // setQuestion(e.target.value);
                             setQuestion(e.target.value);
-                            e.target.value = "";
-                            // this.value = "";
-                        }
-                    }}
-                    onChange={(e) => {
-                        // setQuestion(e.target.value);
-                        setQuestion(e.target.value);
-                        setItem({ ...item, question: e.target.value });
-                    }}
-                />
+                            setItem({ ...item, question: e.target.value });
+                        }}
+                    />
 
-                <button
-                    onClick={(e) => {
-                        getResult();
-                        e.target.previousElementSibling.value = "";
-                    }}
-                    className="w-28 p-1 lg:p-2 border border-black rounded hover:bg-[#b0bd7c] font-serif"
-                >
-                    Ask Groq
-                </button>
-                <button
-                    onClick={newChat}
-                    className="w-28 p-1 lg:p-2 border border-black rounded hover:bg-[#b0bd7c] font-serif"
-                >
-                    New Chat
-                </button>
+                    <button
+                        onClick={(e) => {
+                            getResult();
+                            e.target.previousElementSibling.value = "";
+                        }}
+                        className="p-1 lg:p-2 border border-black rounded hover:bg-[#b0bd7c] font-serif flex items-center gap-2"
+                    >
+                        Ask
+                        <IoMdSend />
+                    </button>
+                    <button
+                        onClick={newChat}
+                        className="w-28 p-1 border border-black rounded hover:bg-[#b0bd7c] font-serif"
+                    >
+                        New Chat
+                    </button>
+                </div>
             </div>
             {/* </div> */}
         </div>

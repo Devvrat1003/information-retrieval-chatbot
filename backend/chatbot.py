@@ -6,9 +6,8 @@ from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import re
 
-load_dotenv()
-
 model = ChatGroq(model="llama3-70b-8192")
+# model = ChatGroq(model="llama-3.3-70b-versatile")
 
 def extract_sql_query(text):
     # Regular expression to match the SQL query block
@@ -19,13 +18,8 @@ def extract_sql_query(text):
     return None
 
 def extractImageURL(text: str):
-    # Regular expression to find URLs
-    url_pattern = r'https?://[\w./?=&%-]+'
 
-    # Extract URLs
-    urls = re.findall(url_pattern, text)
-
-    return urls
+    pass
 
 def checkInsertQuery(input: list):
     model = ChatGroq(model="llama-3.3-70b-versatile")
@@ -49,7 +43,7 @@ def chatbot(question: str, messages: list):
     res = 'nothing'
     
     print("AI: ", response.content)
-    # print("\n ----------------------------------------------\n", isSqlQuery, "\n---------------------------------------------\n")
+    print("\n ----------------------------------------------\n", isSqlQuery, "\n---------------------------------------------\n")
     if isSqlQuery:
 
         result = executeQuery.execute_query({"query": isSqlQuery})
@@ -61,7 +55,7 @@ def chatbot(question: str, messages: list):
         if str(insertQuery.content) == '1':
             print("this ran ---------")
             res += "\n Please click on the following link to complete the payment. https://hotelChatbot/payment.com"
-        # print("responseDB : ", res)
+        print("responseDB : ", res)
         # print("before res : ", res)
         # if "insert into bookings" in isSqlQuery.lower():
         #     res = confirmBooking([AIMessage(response.content), AIMessage(res)])

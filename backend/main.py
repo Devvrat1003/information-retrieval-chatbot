@@ -13,9 +13,7 @@ from fastapi import Request
 import chatbot
 # from langchain_mistralai import ChatMistralAI
 
-
 # Load environment variables from .env
-load_dotenv()
 
 app = FastAPI()
 
@@ -43,6 +41,8 @@ if not os.environ.get("GROQ_API_KEY"):
 # model = ChatMistralAI(model="mistral-large-latest")
 # model = ChatGroq(model="llama-3.2-90b-vision-preview")
 model = ChatGroq(model="llama3-70b-8192")
+# model = ChatGroq(model="llama-3.3-70b-versatile")
+
 
 @app.get("/")
 async def root():

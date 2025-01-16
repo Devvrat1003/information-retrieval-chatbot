@@ -55,6 +55,7 @@ VALUES (<?guestname>, <?email>, <?phonenumber>, <?checkindate>, <?checkoutdate>,
          (SELECT roomid FROM rooms WHERE roomtype = <?roomtype>), 1, 4, 1500.00)
 RETURNING bookingid;
 ```
+NOTE: Once user is booked, do not do it again and again unless user explicitly specifies.
 
 Also provide the follwing link to complete the payment with booking: "https://hotelChatbot/payment.com"
 NOTE: Once you have provided the payment link to the user, it means the database has been updated. Do not run insert query to book again.

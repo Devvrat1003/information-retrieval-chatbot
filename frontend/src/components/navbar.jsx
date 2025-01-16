@@ -1,12 +1,12 @@
+import { IoMdClose } from "react-icons/io";
+
 export default function Navbar() {
     return (
-        <div>
-            <div className="p-2 lg:p-4 w-full text-xl sm:text-2xl lg:text-4xl text-center font-medium font-serif">
-                Hey There! I am Groq,
+        <div className="bg-black text-white w-full flex justify-between items-center p-2 rounded-t">
+            <div className=" text-center text-base font-medium font-serif">
+                Hotel Chatbot
             </div>
-            <p className="text-lg sm:text-xl lg:text-2xl font-serif text-center">
-                your free encyclopedia. Feel free to ask me anything!
-            </p>
+            <IoMdClose />
         </div>
     );
 }

@@ -8,9 +8,8 @@ from dotenv import load_dotenv
 import re
 from langchain_core.messages import HumanMessage, AIMessage
 
-load_dotenv()
-
-model = ChatGroq(model="llama-3.3-70b-versatile")
+# model = ChatGroq(model="llama-3.3-70b-versatile")
+model = ChatGroq(model="llama3-70b-8192")
 
 # creating application states
 class State(TypedDict):
@@ -32,7 +31,7 @@ def generate_answer(state:State, llm):
     """Answer question using retrieved information as context."""
     prompt = (
         "You are a helpful intermediary chatbot for a hotel website. You have to answer question based on their query. Feel free to ask question to user if there is any doubt. Given the following user question, corresponding SQL query, "
-        "and SQL result, answer the user question, in a way human would answer. The user does not need to know what he asked, what was SQL query or if we are even using anything. Only generate the required answer. \n\n"
+        "and SQL result, answer the user question, in a way human would answer. The user does not need to know what he asked, what was SQL query or if we are even using anything. Only generate the required answer.\n\n"
         f'Question: {state["question"]}\n'
         f'SQL Query: {state["query"]}\n'
         f'SQL Result: {state["result"]}'
