@@ -7,6 +7,7 @@ import { IoMdSend } from "react-icons/io";
 import { useRecoilState } from "recoil";
 import { FaMicrophone } from "react-icons/fa";
 import { chatState } from "../atom/chatState";
+import BeatLoader from "react-spinners/BeatLoader";
 
 export default function Chatbot() {
     const [messages, setMessages] = useState([]);
@@ -144,12 +145,18 @@ export default function Chatbot() {
                         </button> */}
                     <button
                         onClick={startListening}
-                        className={`w-28 p-1 border border-black rounded flex items-center gap-1 ${
-                            isListening ? "bg-[#f0a500]" : "hover:bg-[#b0bd7c]"
+                        className={`w-fit p-2 border border-black rounded flex items-center gap-1 ${
+                            isListening
+                                ? "bg-[#f0a500]"
+                                : "hover:bg-[#b0bd7c] px-4"
                         } font-serif`}
                     >
-                        {isListening ? "Listening..." : " Speak"}
-                        {isListening ? null : <FaMicrophone />}
+                        {/* {isListening ? "Listening..." : null} */}
+                        {isListening ? (
+                            <BeatLoader size={6} speedMultiplier={0.5} />
+                        ) : (
+                            <FaMicrophone />
+                        )}
                     </button>
                     {/* </div> */}
                 </div>
