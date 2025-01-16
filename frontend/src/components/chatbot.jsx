@@ -8,18 +8,13 @@ import { useRecoilState } from "recoil";
 import { showChatState } from "../atom/chatState";
 import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
 import { FaMicrophone } from "react-icons/fa";
+import { chatState } from "../atom/chatState";
 
 export default function Chatbot() {
     const [messages, setMessages] = useState([]);
     const [question, setQuestion] = useState("");
-    const [item, setItem] = useState({
-        messages: [
-            { content: "Hello, welcome to Swaroop Vilas Hotel", type: "ai" },
-        ],
-        question: "",
-        images: [],
-        response: "Hello, welcome to Swaroop Vilas Hotel",
-    });
+
+    const [chats, setChats] = useRecoilState(chatState);
 
     let [loading, setLoading] = useState(false);
     const [isListening, setIsListening] = useState(false);
@@ -41,7 +36,7 @@ export default function Chatbot() {
             recognition.current.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 setQuestion(transcript);
-                setItem({ ...item, question: transcript });
+                setChats({ ...chats, question: transcript });
                 recognition.current.stop();
                 getResult();
                 setIsListening(false);
@@ -49,6 +44,7 @@ export default function Chatbot() {
 
             recognition.current.onerror = () => {
                 recognition.current.stop();
+
                 setIsListening(false);
                 alert("Error with speech recognition. Please try again.");
             };
@@ -62,42 +58,34 @@ export default function Chatbot() {
     };
 
     const getResult = async () => {
-        if (item.question === "") {
+        if (chats.question === "") {
             alert("Uh Oh! You forgot to ask a question");
             return;
         }
         try {
             setLoading(true);
-            setItem({ ...item, question: question });
+            setChats({ ...chats, question: question });
             const res = await fetch(
-                // "https://information-retrieval-chatbot.onrender.com/askLLM",
-                "http://127.0.0.1:8000/askLLM",
+                "https://information-retrieval-chatbot.onrender.com/askLLM",
+                // "http://127.0.0.1:8000/askLLM",
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(item),
+                    body: JSON.stringify(chats),
                 }
             );
             let ans = await res.json();
             // setMessages([...messages, question, ans.response]);
             // setMessages(ans.messages);
-            setItem({ ...item, messages: ans.messages, images: ans.images });
+            setChats({ ...chats, messages: ans.messages, images: ans.images });
             console.log(ans, "ans");
             setLoading(false);
         } catch (error) {
             // console.log("error", error);
             return;
         }
-    };
-
-    const newChat = () => {
-        setItem({
-            ...item,
-            messages: [{ content: "Hello, welcome to Swaroop Vilas Hotel" }],
-            question: "",
-        });
     };
 
     return (
@@ -107,13 +95,13 @@ export default function Chatbot() {
             <Navbar></Navbar>
             <div className="w-80 h-[28rem] p-2 flex flex-col justify-between items-center gap-2 rounded">
                 <ChatUI
-                    messages={item}
+                    messages={chats}
                     loading={loading}
                     question={question}
-                    images={item}
+                    images={chats}
                 />
                 {/* <div>
-                {item.images[1].map((url, index) => {
+                {chats.images[1].map((url, index) => {
                     return <img src={url} alt="Image urls" />;
                 })}
             </div> */}
@@ -133,7 +121,7 @@ export default function Chatbot() {
                         onChange={(e) => {
                             // setQuestion(e.target.value);
                             setQuestion(e.target.value);
-                            setItem({ ...item, question: e.target.value });
+                            setChats({ ...chats, question: e.target.value });
                         }}
                     />
 
@@ -150,7 +138,7 @@ export default function Chatbot() {
                     {/* <button
                             onClick={() => {
                                 newChat();
-                                console.log(item, "item");
+                                console.log(chats, "chats");
                             }}
                             className="w-1/2 p-1 border border-black rounded hover:bg-[#b0bd7c] font-serif"
                         >
@@ -158,7 +146,7 @@ export default function Chatbot() {
                         </button> */}
                     <button
                         onClick={startListening}
-                        className={`w-28 p-1 lg:p-2 border border-black rounded flex items-center gap-1 ${
+                        className={`w-28 p-1 border border-black rounded flex items-center gap-1 ${
                             isListening ? "bg-[#f0a500]" : "hover:bg-[#b0bd7c]"
                         } font-serif`}
                     >
@@ -172,7 +160,7 @@ export default function Chatbot() {
         </div>
     );
 }
-// const [item, setItem] = useState({
+// const [chats, setChats] = useState({
 //     messages: [
 //         { content: "The year is 2025." },
 //         { content: "Hello, welcome to Swaroop Vilas Hotel" },

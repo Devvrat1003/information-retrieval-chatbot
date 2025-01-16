@@ -6,8 +6,8 @@ export const showChatState = atom({
     default: false, // Default value
 });
 
-export const chats = atom({
-    key: "chats",
+export const chatState = atom({
+    key: "chatState",
     default: {
         messages: [
             { content: "Hello, welcome to Swaroop Vilas Hotel", type: "ai" },
