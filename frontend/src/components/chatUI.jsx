@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import Markdown from "react-markdown";
 import { ThreeDots } from "react-loader-spinner";
 
 export default function ChatUI(props) {
@@ -10,8 +10,6 @@ export default function ChatUI(props) {
 
     const [images, setImages] = useState([]); // Initialize images as an empty array
     const [showImage, setShowImage] = useState(false);
-
-    const [init, setInit] = useState(true);
 
     // UseEffect to handle image extraction when messages change
     // useEffect(() => {
@@ -35,7 +33,6 @@ export default function ChatUI(props) {
 
     // Scroll to the bottom whenever the messages array changes
     useEffect(() => {
-        if (messages.length > 0) setInit(false);
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop =
                 chatContainerRef.current.scrollHeight;
@@ -50,10 +47,10 @@ export default function ChatUI(props) {
             {messages.map((msg, index) => {
                 return (
                     <div
-                        className={`w-fit max-w-[75%] px-2 py-1 rounded ${
-                            index === 0 && "hidden"
-                        } ${msg.type === "ai" && "bg-green-300 self-start"} ${
-                            msg.type === "human" && "bg-blue-300 self-end"
+                        className={`w-fit max-w-[80%] px-2 py-1 rounded text-[13px] ${
+                            index === 0 && msg.type === "human" && "hidden"
+                        } ${msg.type === "ai" && "bg-[#5ebf2e] self-start"} ${
+                            msg.type === "human" && "bg-[#35bae6] self-end"
                         } `}
                         key={index}
                     >
@@ -68,14 +65,15 @@ export default function ChatUI(props) {
                                 See Images
                             </button>
                         ) : ( */}
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        <div className="break-normal">{msg.content}</div>
+                        {/* <Markdown>{msg.content}</Markdown> */}
                         {/* )} */}
                     </div>
                 );
             })}
             {loading ? (
                 <div className="w-full flex flex-col">
-                    <p className="w-fit max-w-[60%] bg-blue-300 self-end px-2 py-1 rounded">
+                    <p className="w-fit max-w-[80%] bg-[#35bae6] self-end px-2 py-1 rounded">
                         {question}
                     </p>
                     <ThreeDots
