@@ -47,6 +47,43 @@ export default function Chatbot() {
     });
 
     let [loading, setLoading] = useState(false);
+    const [isListening, setIsListening] = useState(false);
+    const recognition = useRef(null);
+
+    // Initialize Speech Recognition
+    if ("webkitSpeechRecognition" in window) {
+        recognition.current = new window.webkitSpeechRecognition();
+        recognition.current.continuous = false;
+        recognition.current.interimResults = false;
+        recognition.current.lang = "en-US";
+    }
+
+    const startListening = () => {
+        if (recognition.current) {
+            recognition.current.start();
+            setIsListening(true);
+
+            recognition.current.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                setQuestion(transcript);
+                setItem({ ...item, question: transcript });
+                recognition.current.stop();
+                setIsListening(false);
+            };
+
+            recognition.current.onerror = () => {
+                recognition.current.stop();
+                setIsListening(false);
+                alert("Error with speech recognition. Please try again.");
+            };
+
+            recognition.current.onend = () => {
+                setIsListening(false);
+            };
+        } else {
+            alert("Your browser does not support speech recognition.");
+        }
+    };
 
     const getResult = async () => {
         if (item.question === "") {
@@ -152,6 +189,14 @@ export default function Chatbot() {
                         >
                             New Chat
                         </button> */}
+                      <button
+                    onClick={startListening}
+                    className={`w-28 p-1 lg:p-2 border border-black rounded ${
+                        isListening ? "bg-[#f0a500]" : "hover:bg-[#b0bd7c]"
+                    } font-serif`}
+                >
+                    {isListening ? "Listening..." : "🎤 Speak"}
+                </button>
                     {/* </div> */}
                 </div>
             </div>
