@@ -12,7 +12,8 @@ from pydantic import BaseModel
 from fastapi import Request
 import chatbot
 # from langchain_mistralai import ChatMistralAI
-
+import speech_recognition as sr
+import pyttsx3
 # Load environment variables from .env
 
 app = FastAPI()

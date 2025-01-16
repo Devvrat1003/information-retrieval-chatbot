@@ -7,6 +7,7 @@ import { IoMdSend } from "react-icons/io";
 import { useRecoilState } from "recoil";
 import { showChatState } from "../atom/chatState";
 import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
+import { FaMicrophone } from "react-icons/fa";
 
 export default function Chatbot() {
     const [messages, setMessages] = useState([]);
@@ -42,6 +43,7 @@ export default function Chatbot() {
                 setQuestion(transcript);
                 setItem({ ...item, question: transcript });
                 recognition.current.stop();
+                getResult();
                 setIsListening(false);
             };
 
@@ -156,11 +158,12 @@ export default function Chatbot() {
                         </button> */}
                     <button
                         onClick={startListening}
-                        className={`w-28 p-1 lg:p-2 border border-black rounded ${
+                        className={`w-28 p-1 lg:p-2 border border-black rounded flex items-center gap-1 ${
                             isListening ? "bg-[#f0a500]" : "hover:bg-[#b0bd7c]"
                         } font-serif`}
                     >
-                        {isListening ? "Listening..." : "🎤 Speak"}
+                        {isListening ? "Listening..." : " Speak"}
+                        {isListening ? null : <FaMicrophone />}
                     </button>
                     {/* </div> */}
                 </div>
