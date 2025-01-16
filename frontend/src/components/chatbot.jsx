@@ -1,12 +1,10 @@
 import React from "react";
-import { useState, useRef, useEffect, CSSProperties } from "react";
+import { useState, useRef } from "react";
 import "../chatbotUI.css";
 import ChatUI from "./chatUI";
 import Navbar from "./navbar";
 import { IoMdSend } from "react-icons/io";
 import { useRecoilState } from "recoil";
-import { showChatState } from "../atom/chatState";
-import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
 import { FaMicrophone } from "react-icons/fa";
 import { chatState } from "../atom/chatState";
 

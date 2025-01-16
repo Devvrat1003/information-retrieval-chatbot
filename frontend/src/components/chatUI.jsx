@@ -65,8 +65,7 @@ export default function ChatUI(props) {
                                 See Images
                             </button>
                         ) : ( */}
-                        <div className="break-normal">{msg.content}</div>
-                        {/* <Markdown>{msg.content}</Markdown> */}
+                        <Markdown>{msg.content}</Markdown>
                         {/* )} */}
                     </div>
                 );

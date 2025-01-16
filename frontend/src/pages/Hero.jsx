@@ -4,6 +4,7 @@ import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { showChatState } from "../atom/chatState";
+import Typewriter from "typewriter-effect";
 
 export default function Hero() {
     const [showChat, setShowChat] = useRecoilState(showChatState);
@@ -25,8 +26,27 @@ export default function Hero() {
                         Welcome to Swaroop Vilas Hotel
                     </p>
                     <p className="text-3xl w-1/2">
-                        Experience Royal Elegance at Swaroop Vilas Hotel – Where
-                        Luxury Meets Tranquility!
+                        Experience Royal Elegance at Swaroop Vilas Hotel –
+                        <Typewriter
+                            onInit={(typewriter) => {
+                                typewriter
+                                    .typeString("Step into Royalty")
+                                    .pauseFor(1000)
+                                    .deleteAll()
+                                    .pauseFor(500);
+                                typewriter
+                                    .typeString(
+                                        "Where Luxury Meets Tranquility!"
+                                    )
+                                    .pauseFor(1500)
+
+                                    .start();
+                            }}
+                            options={{
+                                loop: true,
+                                delay: 100,
+                            }}
+                        />
                     </p>
                     <p className="text-xl font-light w-1/2">
                         A serene retreat in Udaipur overlooking Lake Swaroop
@@ -40,7 +60,9 @@ export default function Hero() {
             </div>
             <div className="fixed right-4 bottom-4">
                 <button
-                    className={`${showChat ? "hidden" : "visible"}`}
+                    className={`${
+                        showChat ? "hidden" : "visible"
+                    } fixed right-4 bottom-4`}
                     onClick={toggleChat}
                 >
                     <IoChatbubbleEllipsesSharp
@@ -49,7 +71,11 @@ export default function Hero() {
                         className="scale-x-[-1]"
                     />
                 </button>
-                <div className={`${showChat ? "visible" : "hidden"}`}>
+                <div
+                    className={`${
+                        showChat ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                    } transform origin-bottom-right transition-all duration-500 ease-in-out`}
+                >
                     <Chatbot />
                 </div>
             </div>
