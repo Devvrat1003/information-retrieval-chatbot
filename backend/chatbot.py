@@ -18,8 +18,25 @@ def extract_sql_query(text):
     return None
 
 def extractImageURL(text: str):
+    """
+    Extract image URLs from the input text based on common image extensions.
+    Returns a list of tuples containing image tags and URLs.
+    """
+    image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp')
     
-    pass
+    # Regular expression to match URLs
+    url_pattern = r"https?://[^\s]+"
+    urls = re.findall(url_pattern, text)
+    
+    # Filter URLs for image extensions
+    image_urls = [
+        (match.group(1), url)
+        for url in urls
+        if any(url.lower().endswith(ext) for ext in image_extensions)
+        if (match := re.search(r'(\b\w+\b):.*$', text))  # Extract image tag
+    ]
+    
+    return image_urls
 
 def checkInsertQuery(input: list):
     model = ChatGroq(model="llama-3.3-70b-versatile")
