@@ -44,7 +44,7 @@ if not os.environ.get("GROQ_API_KEY"):
 model = ChatGroq(model="llama3-70b-8192")
 # model = ChatGroq(model="llama-3.3-70b-versatile")
 
-recognizer = sr.Recognizer()
+recognizer = sr.Recognizer()    
 engine = pyttsx3.init()
 
 @app.get("/")

@@ -15,17 +15,17 @@ export default function Hero() {
 
     return (
         <div
-            className={`bg-cover lg:h-screen flex`}
+            className={`bg-cover min-h-screen flex`}
             style={{
                 backgroundImage: `url(${hotel})`,
             }}
         >
             <div className={`text-white bg-black w-full bg-opacity-70 p-2`}>
-                <div className="ml-[5%] mt-[5%] flex flex-col gap-10">
-                    <p className="text-7xl w-1/3">
+                <div className="p-[5%] flex flex-col gap-16 md:gap-10 items-center md:items-start">
+                    <p className="text-5xl md:text-7xl text-center w-4/5 md:text-left md:w-3/5 xl:w-1/3">
                         Welcome to Swaroop Vilas Hotel
                     </p>
-                    <p className="text-3xl w-1/2">
+                    <div className="text-2xl md:text-3xl text-justify md:text-left md:w-4/5 lg:w-3/5">
                         Experience Royal Elegance at Swaroop Vilas Hotel –
                         <Typewriter
                             onInit={(typewriter) => {
@@ -47,8 +47,8 @@ export default function Hero() {
                                 delay: 100,
                             }}
                         />
-                    </p>
-                    <p className="text-xl font-light w-1/2">
+                    </div>
+                    <p className="text-xl font-light text-justify md:text-left md:w-3/5 lg:w-1/2">
                         A serene retreat in Udaipur overlooking Lake Swaroop
                         Sagar. Blending Rajasthani heritage with modern luxury,
                         we offer elegant rooms, world-class dining, a tranquil

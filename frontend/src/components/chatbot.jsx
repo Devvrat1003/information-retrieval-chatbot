@@ -151,7 +151,6 @@ export default function Chatbot() {
                                 : "hover:bg-[#b0bd7c] px-4"
                         } font-serif`}
                     >
-                        {/* {isListening ? "Listening..." : null} */}
                         {isListening ? (
                             <BeatLoader size={6} speedMultiplier={0.5} />
                         ) : (
