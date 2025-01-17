@@ -2,12 +2,17 @@ import Chatbot from "../components/chatbot";
 import hotel from "../assets/hotel.jpg";
 import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
 import { useState } from "react";
-import { useRecoilState } from "recoil";
-import { showChatState } from "../atom/chatState";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { chatState, showChatState, showImageState } from "../atom/chatState";
 import Typewriter from "typewriter-effect";
+import { Carousel } from "react-responsive-carousel";
+import ImageCarousel from "../components/imageCarousel";
 
 export default function Hero() {
     const [showChat, setShowChat] = useRecoilState(showChatState);
+    const [showImage, setShowImage] = useRecoilState(showImageState);
+
+    const chats = useRecoilValue(chatState);
 
     const toggleChat = async () => {
         setShowChat(!showChat);
@@ -15,7 +20,7 @@ export default function Hero() {
 
     return (
         <div
-            className={`bg-cover min-h-screen flex`}
+            className={`static bg-cover min-h-screen flex`}
             style={{
                 backgroundImage: `url(${hotel})`,
             }}
@@ -79,6 +84,31 @@ export default function Hero() {
                     <Chatbot />
                 </div>
             </div>
+
+            {showImage && chats.images.length > 0 && (
+                // <div className="absolute h-screen w-screen">
+                //     {/* <div className="h-full bg-black flex items-center gap-2 p-2 w-max rounded overflow-x-scroll"> */}
+                //     <Carousel>
+                //         {chats.images.map((pair, index) => {
+                //             return (
+                //                 <div className=" bg-blue-300 ">
+                //                     <img
+                //                         key={index}
+                //                         src={pair[1]}
+                //                         alt="Image urls"
+                //                     />
+                //                 </div>
+                //             );
+                //         })}
+                //     </Carousel>
+                //     {/* </div> */}
+                <div className="absolute min-h-screen backdrop-blur-lg flex justify-center items-center">
+                    <div className="w-1/2 ">
+                        <ImageCarousel chats={chats} />
+                    </div>
+                </div>
+                // </div>
+            )}
         </div>
     );
 }

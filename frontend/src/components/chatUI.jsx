@@ -1,15 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import { ThreeDots } from "react-loader-spinner";
+import { CgAttachment } from "react-icons/cg";
+import { showImageState } from "../atom/chatState";
+import { useRecoilState } from "recoil";
 
 export default function ChatUI(props) {
-    const messages = props.messages.messages;
+    const messages = props.messages;
     const loading = props.loading;
     const question = props.question;
     const chatContainerRef = useRef(null); // Ref for the chat container
 
-    const [images, setImages] = useState([]); // Initialize images as an empty array
-    const [showImage, setShowImage] = useState(false);
+    const images = props.images;
+    const [showImage, setShowImage] = useRecoilState(showImageState);
+
+    const showImages = () => {
+        // console.log(images, "images");
+        setShowImage(!showImage);
+        // console.log(showImage, "showImage");
+    };
 
     // UseEffect to handle image extraction when messages change
     // useEffect(() => {
@@ -85,21 +94,12 @@ export default function ChatUI(props) {
                     />
                 </div>
             ) : null}
-            {/* {showImage && images.length > 0 && (
-                <div className="flex backdrop:blur-sm gap-2 bg-green-300 p-2 w-max rounded">
-                    {images.map((url, index) => {
-                        if (index % 2 === 0) {
-                            return (
-                                <img
-                                    key={index}
-                                    className="h-28"
-                                    src={url}
-                                    alt="Image urls"
-                                />
-                            );
-                        }
-                    })}
-                </div> */}
+            {/* {images.length > 0 && ( */}
+            <CgAttachment
+                size={30}
+                className="absolute right-4 top-18 cursor-pointer border border-black bg-opacity-30 backdrop-blur-sm  rounded-full p-1"
+                onClick={showImages}
+            />
             {/* )} */}
         </div>
     );

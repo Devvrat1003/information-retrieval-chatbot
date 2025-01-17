@@ -37,7 +37,7 @@ export default function Chatbot() {
                 setQuestion(transcript);
                 setChats({ ...chats, question: transcript });
                 recognition.current.stop();
-                getResult();
+                // getResult();
                 setIsListening(false);
             };
 
@@ -78,7 +78,7 @@ export default function Chatbot() {
             let ans = await res.json();
             // setMessages([...messages, question, ans.response]);
             // setMessages(ans.messages);
-            setChats({ ...chats, messages: ans.messages, images: ans.images });
+            setChats({ ...chats, messages: ans.messages });
             console.log(ans, "ans");
             setLoading(false);
         } catch (error) {
@@ -94,10 +94,10 @@ export default function Chatbot() {
             <Navbar></Navbar>
             <div className="w-80 h-[28rem] p-2 flex flex-col justify-between items-center gap-2 rounded">
                 <ChatUI
-                    messages={chats}
+                    messages={chats.messages}
                     loading={loading}
                     question={question}
-                    images={chats}
+                    images={chats.images}
                 />
                 {/* <div>
                 {chats.images[1].map((url, index) => {
@@ -164,30 +164,3 @@ export default function Chatbot() {
         </div>
     );
 }
-// const [chats, setChats] = useState({
-//     messages: [
-//         { content: "The year is 2025." },
-//         { content: "Hello, welcome to Swaroop Vilas Hotel" },
-//         { content: "show me images of some rooms" },
-//         {
-//             content:
-//                 "We have a variety of rooms to choose from. Here are some images of our rooms: 1. **Deluxe Room**: Queen-sized bed, en-suite bathroom, city view [https://media.istockphoto.com/id/1050564510/photo/3d-rendering-beautiful-luxury-bedroom-suite-in-hotel-with-tv.jpg?s=612x612&w=0&k=20&c=ZYEso7dgPl889aYddhY2Fj3GOyuwqliHkbbT8pjl_iM=](https://media.istockphoto.com/id/1050564510/photo/3d-rendering-beautiful-luxury-bedroom-suite-in-hotel-with-tv.jpg?s=612x612&w=0&k=20&c=ZYEso7dgPl889aYddhY2Fj3GOyuwqliHkbbT8pjl_iM=) 2. **Suite**: King-sized bed, living area, premium amenities [https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?cs=srgb&dl=pexels-pixabay-271618.jpg&fm=jpg](https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?cs=srgb&dl=pexels-pixabay-271618.jpg&fm=jpg)3. **Standard Room**: Cozy room with essential amenities [https://media.istockphoto.com/id/627892060/photo/hotel-room-suite-with-view.jpg?s=612x612&w=0&k=20&c=YBwxnGH3MkOLLpBKCvWAD8F__T-ypznRUJ_N13Zb1cU=](https://media.istockphoto.com/id/627892060/photo/hotel-room-suite-with-view.jpg?s=612x612&w=0&k=20&c=YBwxnGH3MkOLLpBKCvWAD8F__T-ypznRUJ_N13Zb1cU=)4. **Family Room**: Two queen beds, perfect for families [https://media.istockphoto.com/id/1370825295/photo/modern-hotel-room-with-double-bed-night-tables-tv-set-and-cityscape-from-the-window.jpg?s=612x612&w=0&k=20&c=QMXz9HJVhU-8MtBYyeJxtqLz90j7r0SrR6FTWniPkgc=](https://media.istockphoto.com/id/1370825295/photo/modern-hotel-room-with-double-bed-night-tables-tv-set-and-cityscape-from-the-window.jpg?s=612x612&w=0&k=20&c=QMXz9HJVhU-8MtBYyeJxtqLz90j7r0SrR6FTWniPkgc=)5. **Penthouse**: Luxury suite with panoramic city views [https://t3.ftcdn.net/jpg/06/19/00/08/360_F_619000872_AxiwLsfQqRHMkNxAbN4l5wg1MsPgBsmo.jpg](https://t3.ftcdn.net/jpg/06/19/00/08/360_F_619000872_AxiwLsfQqRHMkNxAbN4l5wg1MsPgBsmo.jpg)Which type of room would you like to book?",
-//         },
-//     ],
-//     question: "",
-//     images: [
-//         3,
-//         [
-//             "https://media.istockphoto.com/id/1050564510/photo/3d-rendering-beautiful-luxury-bedroom-suite-in-hotel-with-tv.jpg?s=612x612&w=0&k=20&c=ZYEso7dgPl889aYddhY2Fj3GOyuwqliHkbbT8pjl_iM=",
-//             "https://media.istockphoto.com/id/1050564510/photo/3d-rendering-beautiful-luxury-bedroom-suite-in-hotel-with-tv.jpg?s=612x612&w=0&k=20&c=ZYEso7dgPl889aYddhY2Fj3GOyuwqliHkbbT8pjl_iM=",
-//             "https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?cs=srgb&dl=pexels-pixabay-271618.jpg&fm=jpg",
-//             "https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?cs=srgb&dl=pexels-pixabay-271618.jpg&fm=jpg",
-//             "https://media.istockphoto.com/id/627892060/photo/hotel-room-suite-with-view.jpg?s=612x612&w=0&k=20&c=YBwxnGH3MkOLLpBKCvWAD8F__T-ypznRUJ_N13Zb1cU=",
-//             "https://media.istockphoto.com/id/627892060/photo/hotel-room-suite-with-view.jpg?s=612x612&w=0&k=20&c=YBwxnGH3MkOLLpBKCvWAD8F__T-ypznRUJ_N13Zb1cU=",
-//             "https://media.istockphoto.com/id/1370825295/photo/modern-hotel-room-with-double-bed-night-tables-tv-set-and-cityscape-from-the-window.jpg?s=612x612&w=0&k=20&c=QMXz9HJVhU-8MtBYyeJxtqLz90j7r0SrR6FTWniPkgc=",
-//             "https://media.istockphoto.com/id/1370825295/photo/modern-hotel-room-with-double-bed-night-tables-tv-set-and-cityscape-from-the-window.jpg?s=612x612&w=0&k=20&c=QMXz9HJVhU-8MtBYyeJxtqLz90j7r0SrR6FTWniPkgc=",
-//             "https://t3.ftcdn.net/jpg/06/19/00/08/360_F_619000872_AxiwLsfQqRHMkNxAbN4l5wg1MsPgBsmo.jpg",
-//             "https://t3.ftcdn.net/jpg/06/19/00/08/360_F_619000872_AxiwLsfQqRHMkNxAbN4l5wg1MsPgBsmo.jpg",
-//         ],
-//     ],
-// });

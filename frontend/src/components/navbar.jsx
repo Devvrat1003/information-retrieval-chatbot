@@ -2,7 +2,6 @@ import { IoMdClose } from "react-icons/io";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { chatState, showChatState } from "../atom/chatState";
 import { FaWindowMinimize } from "react-icons/fa6";
-
 export default function Navbar() {
     const [showChat, setShowChat] = useRecoilState(showChatState);
     const toggleChat = () => {
