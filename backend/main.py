@@ -12,8 +12,8 @@ from pydantic import BaseModel
 from fastapi import Request
 import chatbot
 # from langchain_mistralai import ChatMistralAI
-import speech_recognition as sr
-import pyttsx3
+# import speech_recognition as sr
+# import pyttsx3
 # Load environment variables from .env
 
 app = FastAPI()
@@ -44,8 +44,8 @@ if not os.environ.get("GROQ_API_KEY"):
 model = ChatGroq(model="llama3-70b-8192")
 # model = ChatGroq(model="llama-3.3-70b-versatile")
 
-recognizer = sr.Recognizer()    
-engine = pyttsx3.init()
+# recognizer = sr.Recognizer()    
+# engine = pyttsx3.init()
 
 @app.get("/")
 async def root():
@@ -71,7 +71,7 @@ async def getLLMResponse(request: Request):
 
     response = chatbot.chatbot(data["question"], data["messages"])
     # Extract image URLs
-    images = extractImageURL(response["response"])
+    images = chatbot.extractImageURL(response["response"])
     
     return {
         "messages": response["messages"],
@@ -80,30 +80,30 @@ async def getLLMResponse(request: Request):
     }
 
 
-@app.post("/voiceChat/")
-async def voice_chat():
-    try:
-        # Capture audio from the microphone
-        with sr.Microphone() as source:
-            print("Listening...")
-            recognizer.adjust_for_ambient_noise(source)
-            audio = recognizer.listen(source)
+# @app.post("/voiceChat/")
+# async def voice_chat():
+#     try:
+#         # Capture audio from the microphone
+#         with sr.Microphone() as source:
+#             print("Listening...")
+#             recognizer.adjust_for_ambient_noise(source)
+#             audio = recognizer.listen(source)
 
-        # Convert speech to text
-        user_input = recognizer.recognize_google(audio)
-        print(f"User said: {user_input}")
+#         # Convert speech to text
+#         user_input = recognizer.recognize_google(audio)
+#         print(f"User said: {user_input}")
 
-        # Process input with chatbot
-        response = chatbot.chatbot(user_input, messages)
+#         # Process input with chatbot
+#         response = chatbot.chatbot(user_input, messages)
         
-        # Convert chatbot response to speech
-        print(f"Chatbot response: {response}")
-        engine.say(response)
-        engine.runAndWait()
+#         # Convert chatbot response to speech
+#         print(f"Chatbot response: {response}")
+#         engine.say(response)
+#         engine.runAndWait()
 
-        return {"user_input": user_input, "response": response}
+#         return {"user_input": user_input, "response": response}
 
-    except sr.UnknownValueError:
-        return {"error": "Sorry, I could not understand the audio."}
-    except sr.RequestError as e:
-        return {"error": f"Could not request results; {e}"}
+#     except sr.UnknownValueError:
+#         return {"error": "Sorry, I could not understand the audio."}
+#     except sr.RequestError as e:
+#         return {"error": f"Could not request results; {e}"}
