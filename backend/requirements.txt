@@ -12,3 +12,4 @@ python-dotenv
 typing_extensions
 langchain_mistralai
 SpeechRecognition
+pyttsx3

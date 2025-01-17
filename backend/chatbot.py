@@ -18,7 +18,7 @@ def extract_sql_query(text):
     return None
 
 def extractImageURL(text: str):
-
+    
     pass
 
 def checkInsertQuery(input: list):
