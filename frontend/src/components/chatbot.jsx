@@ -19,13 +19,6 @@ export default function Chatbot() {
     const [isListening, setIsListening] = useState(false);
     const recognition = useRef(null);
 
-    // Initialize Speech Recognition
-    if ("webkitSpeechRecognition" in window) {
-        recognition.current = new window.webkitSpeechRecognition();
-        recognition.current.continuous = false;
-        recognition.current.interimResults = false;
-        recognition.current.lang = "en-US";
-    }
 
     const startListening = () => {
         if (recognition.current) {
