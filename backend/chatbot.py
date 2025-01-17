@@ -19,15 +19,21 @@ def extract_sql_query(text):
         return match.group(1).strip()
     return None
 
- def extract_image_urls_from_llm_response(response):
-    # Using LLM to extract image URLs
-    messages = [SystemMessage("Extract all image URLs from the given response.")]
+def removeURL(text:str):
+    messages = [SystemMessage("Given a text, remove all the image URL from the text. Output: Summary of the rest of the text in properly worded form. Only produce the output without any extra text.")]
+    messages.append(HumanMessage(text))
+    res = model.invoke(messages)
 
-    messages.append(HumanMessage(response))
+    return res
 
-    image_urls = model.invoke(messages)
+def extractImageURL(text:str):
+    messages = [SystemMessage("Given a text, extract the all the image URL from the text and also the type of room. Output: an array of array of room type and corresponding url. Only produce the output without any extra text.")]
+    messages.append(HumanMessage(text))
+    res = model.invoke(messages)
 
-    return json.loads(image_urls.content) if image_urls.content else None
+    list_of_lists = ast.literal_eval(res.content)
+    
+    return list_of_lists
 
 def checkInsertQuery(input: list):
     model = ChatGroq(model="llama-3.3-70b-versatile")
@@ -80,6 +86,11 @@ def chatbot(question: str, messages: list):
         res = response.content
 
     urls = extractImageURL(res)
+
+    if(len(urls) > 0): 
+        curr = removeURL(res)
+        messages.pop()
+        messages.append(curr)
 
     return {"messages": messages, "response": res, "images": urls}
 

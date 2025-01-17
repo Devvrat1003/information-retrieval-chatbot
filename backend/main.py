@@ -70,8 +70,6 @@ async def getLLMResponse(request: Request):
         data["messages"].append(AIMessage("Hello, welcome to Swaroop Vilas Hotel"))
 
     response = chatbot.chatbot(data["question"], data["messages"])
-    # Extract image URLs
-    # images = chatbot.extractImageURL(response["response"])
 
     return {
         "messages": response["messages"],

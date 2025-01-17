@@ -65,8 +65,8 @@ export default function Chatbot() {
             setLoading(true);
             setChats({ ...chats, question: question });
             const res = await fetch(
-                "https://information-retrieval-chatbot.onrender.com/askLLM",
-                // "http://127.0.0.1:8000/askLLM",
+                // "https://information-retrieval-chatbot.onrender.com/askLLM",
+                "http://127.0.0.1:8000/askLLM",
                 {
                     method: "POST",
                     headers: {
@@ -78,8 +78,17 @@ export default function Chatbot() {
             let ans = await res.json();
             // setMessages([...messages, question, ans.response]);
             // setMessages(ans.messages);
-            setChats({ ...chats, messages: ans.messages });
+            if (ans.images && ans.images.length > 0)
+                setChats({
+                    ...chats,
+                    messages: ans.messages,
+                    images: ans.images,
+                });
+            else {
+                setChats({ ...chats, messages: ans.messages });
+            }
             console.log(ans, "ans");
+            console.log(chats, "chats");
             setLoading(false);
         } catch (error) {
             // console.log("error", error);

@@ -38,20 +38,27 @@ from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 import os
 from langchain_groq import ChatGroq
 import ast
+import json
 
 # Convert the string to a Python list of lists
 
 
 model = ChatGroq(model="llama3-70b-8192")
 
-def extractImageURL(text:str):
-    messages = [SystemMessage("Given a text, extract the all the image URL from the text and also the type of room. Output: an array of array of room type and corresponding url. Only produce the output without any extra text.")]
+def removeURL(text:str):
+    messages = [SystemMessage("Given a text, remove all the image URL from the text. Output: Summary of the rest of the text in properly worded form. Only produce the output without any extra text.")]
     messages.append(HumanMessage(text))
     res = model.invoke(messages)
-    return res
-res = extractImageURL(text)
 
-list_of_lists = ast.literal_eval(res.content)
+    return res
+
+
+
+res = removeURL(text)
+
+# list_of_lists = ast.literal_eval(res.content)
 
 # Output the result
-print(type(list_of_lists))
+# print(type(list_of_lists))
+
+print(res.content)

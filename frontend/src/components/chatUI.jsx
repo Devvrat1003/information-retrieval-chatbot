@@ -15,7 +15,7 @@ export default function ChatUI(props) {
     const [showImage, setShowImage] = useRecoilState(showImageState);
 
     const showImages = () => {
-        // console.log(images, "images");
+        console.log(images, "images");
         setShowImage(!showImage);
         // console.log(showImage, "showImage");
     };
@@ -94,13 +94,13 @@ export default function ChatUI(props) {
                     />
                 </div>
             ) : null}
-            {/* {images.length > 0 && ( */}
-            {/* <CgAttachment
-                size={30}
-                className="absolute right-4 top-18 cursor-pointer border border-black bg-opacity-30 backdrop-blur-sm  rounded-full p-1"
-                onClick={showImages}
-            /> */}
-            {/* )} */}
+            {images.length > 0 && (
+                <CgAttachment
+                    size={30}
+                    className="absolute right-4 top-18 cursor-pointer border border-black bg-opacity-30 backdrop-blur-sm  rounded-full p-1"
+                    onClick={showImages}
+                />
+            )}
         </div>
     );
 }
