@@ -94,7 +94,7 @@ export default function ChatUI(props) {
                     />
                 </div>
             ) : null}
-            {images.length > 0 && (
+            {images.length > 0 && images[0][1].length > 0 && (
                 <CgAttachment
                     size={30}
                     className="absolute right-4 top-18 cursor-pointer border border-black bg-opacity-30 backdrop-blur-sm  rounded-full p-1"
