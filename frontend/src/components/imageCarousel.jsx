@@ -1,8 +1,12 @@
 import React from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { useRecoilState } from "recoil";
+import { showImageState } from "../atom/chatState";
 
 const ImageCarousel = ({ chats }) => {
+    const [showImage, setShowImage] = useRecoilState(showImageState);
+
     return (
         <div className="">
             <Carousel
@@ -17,10 +21,7 @@ const ImageCarousel = ({ chats }) => {
                 {chats.images.map((pair, index) => (
                     <div key={index} className="">
                         <p className="text-white text-xl py-2">{pair[0]}</p>
-                        <img
-                            src={pair[1]}
-                            alt={`Image ${index + 1}`}
-                        />
+                        <img src={pair[1]} alt={`Image ${index + 1}`} />
                     </div>
                 ))}
             </Carousel>
