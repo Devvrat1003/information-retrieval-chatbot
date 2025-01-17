@@ -71,14 +71,9 @@ async def getLLMResponse(request: Request):
 
     response = chatbot.chatbot(data["question"], data["messages"])
     # Extract image URLs
-    images = chatbot.extractImageURL(response["response"])
-    
-    return {
-        "messages": response["messages"],
-        "response": response["response"],
-        "images": images
-    }
+    # images = chatbot.extractImageURL(response["response"])
 
+    return response
 
 # @app.post("/voiceChat/")
 # async def voice_chat():

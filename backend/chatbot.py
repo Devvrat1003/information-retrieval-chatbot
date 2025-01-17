@@ -5,6 +5,7 @@ from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import re
+import ast
 
 model = ChatGroq(model="llama3-70b-8192")
 # model = ChatGroq(model="llama-3.3-70b-versatile")
@@ -79,7 +80,7 @@ def chatbot(question: str, messages: list):
 
     urls = extractImageURL(res)
 
-    return {"messages": messages, "response": res}
+    return {"messages": messages, "response": res, "images": urls}
 
 # if __name__ == "__main__":    
 
