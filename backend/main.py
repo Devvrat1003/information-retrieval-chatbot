@@ -70,7 +70,15 @@ async def getLLMResponse(request: Request):
         data["messages"].append(AIMessage("Hello, welcome to Swaroop Vilas Hotel"))
 
     response = chatbot.chatbot(data["question"], data["messages"])
-    return response
+    # Extract image URLs
+    images = extractImageURL(response["response"])
+    
+    return {
+        "messages": response["messages"],
+        "response": response["response"],
+        "images": images
+    }
+
 
 @app.post("/voiceChat/")
 async def voice_chat():
