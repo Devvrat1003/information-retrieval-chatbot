@@ -15,30 +15,9 @@ export default function ChatUI(props) {
     const [showImage, setShowImage] = useRecoilState(showImageState);
 
     const showImages = () => {
-        console.log(images, "images");
+        // console.log(images, "images");
         setShowImage(!showImage);
-        // console.log(showImage, "showImage");
     };
-
-    // UseEffect to handle image extraction when messages change
-    // useEffect(() => {
-    //     // Function to extract image URLs
-    //     function extractImageURL(text) {
-    //         const urlPattern = /https?:\/\/[\w./?=&%-]+/g;
-    //         // const urlPattern = /(\d+)\. ([\w\s]+) - (https?:\/\/[^\s]+)/g;
-
-    //         const urls = text.match(urlPattern);
-    //         return urls || null;
-    //     }
-
-    //     // Extract image URLs from all message contents
-    //     const newImages = messages
-    //         .map((msg) => extractImageURL(msg.content))
-    //         .filter((url) => url != null);
-
-    //     // Set the images state
-    //     setImages(newImages.flat());
-    // }, [messages]); // Dependency on messages to trigger the effect when they change
 
     // Scroll to the bottom whenever the messages array changes
     useEffect(() => {
