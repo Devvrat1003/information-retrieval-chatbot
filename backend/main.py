@@ -73,8 +73,11 @@ async def getLLMResponse(request: Request):
     # Extract image URLs
     # images = chatbot.extractImageURL(response["response"])
 
-    return response
-
+    return {
+        "messages": response["messages"],
+        "response": response["response"],
+        "images": response["images"]
+    }
 # @app.post("/voiceChat/")
 # async def voice_chat():
 #     try:
