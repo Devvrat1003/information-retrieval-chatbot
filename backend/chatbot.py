@@ -17,26 +17,15 @@ def extract_sql_query(text):
         return match.group(1).strip()
     return None
 
-def extractImageURL(text: str):
-    """
-    Extract image URLs from the input text based on common image extensions.
-    Returns a list of tuples containing image tags and URLs.
-    """
-    image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp')
-    
-    # Regular expression to match URLs
-    url_pattern = r"https?://[^\s]+"
-    urls = re.findall(url_pattern, text)
-    
-    # Filter URLs for image extensions
-    image_urls = [
-        (match.group(1), url)
-        for url in urls
-        if any(url.lower().endswith(ext) for ext in image_extensions)
-        if (match := re.search(r'(\b\w+\b):.*$', text))  # Extract image tag
-    ]
-    
-    return image_urls
+ def extract_image_urls_from_llm_response(response):
+    # Using LLM to extract image URLs
+    messages = [SystemMessage("Extract all image URLs from the given response.")]
+
+    messages.append(HumanMessage(response))
+
+    image_urls = model.invoke(messages)
+
+    return json.loads(image_urls.content) if image_urls.content else None
 
 def checkInsertQuery(input: list):
     model = ChatGroq(model="llama-3.3-70b-versatile")
