@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 import re
 from langchain_core.messages import HumanMessage, AIMessage
 
+load_dotenv()
+
 # model = ChatGroq(model="llama-3.3-70b-versatile")
 model = ChatGroq(model="llama3-70b-8192")
 

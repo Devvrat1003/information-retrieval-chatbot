@@ -25,7 +25,7 @@ export default function Navbar() {
 
     return (
         <div className="bg-black border border-black text-white w-full flex justify-between items-center p-2 px-3 rounded-t">
-            <div className=" text-center border border-black text-lg font-medium font-serif rounded-t">
+            <div className=" text-center border border-black text-lg font-medium font-serif ">
                 Hotel Chatbot
             </div>
             <div className="flex items-center gap-2">

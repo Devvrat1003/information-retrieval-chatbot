@@ -35,6 +35,24 @@ def extractImageURL(text:str):
     
     return list_of_lists
 
+def enhanceText(text: str):
+    messages = [SystemMessage("""Convert the following text into Markdown code with the following rules:
+
+1. Make important elements (e.g., headings, room types, or key details) bold or use appropriate Markdown headings (e.g., #, ##, or ###).
+2. Add line breaks where necessary to improve readability.
+3. Use lists (-, 1., or *) for enumerations or grouped items.
+4. Preserve any meaningful structure, such as paragraphs or sections.
+5. Use code blocks (\```) where required, especially for showing examples or templates.
+6. Ensure the Markdown is clean and easy to read.
+7. Add symbols such as (:, -, etc) to improve readability where needed.
+8. Properly format links as well.
+                              
+Note: Directly provide the markdown text without any extra caption or anything.""")]
+    messages.append(HumanMessage(text))
+    res = model.invoke(messages)
+
+    return res.content
+
 def checkInsertQuery(input: list):
     model = ChatGroq(model="llama-3.3-70b-versatile")
 
@@ -55,7 +73,7 @@ def chatbot(question: str, messages: list):
     isSqlQuery = extract_sql_query(response.content)
 
     res = 'nothing'
-    
+    print("You: ", question)
     print("AI: ", response.content)
     print("\n ----------------------------------------------\n", isSqlQuery, "\n---------------------------------------------\n")
     if isSqlQuery:
@@ -79,18 +97,25 @@ def chatbot(question: str, messages: list):
         #     messages.append(AIMessage(res))
         # else:
         #     messages.append(AIMessage(responseDB["answer"]))
-        messages.append(AIMessage(res))
+        # messages.append(AIMessage(res))
 
     else: 
-        messages.append(AIMessage(response.content))
+        # messages.append(AIMessage(response.content))
         res = response.content
 
-    urls = extractImageURL(res)
-
-    if(len(urls) > 0): 
-        curr = removeURL(res)
-        messages.pop()
-        messages.append(curr)
+    print("Text before : ", res)
+    res = enhanceText(res)
+    print("Text After : ", res)
+    messages.append(AIMessage(res))
+    urls = []
+    try:
+        urls = extractImageURL(res)
+        if(len(urls) > 0): 
+            curr = removeURL(res)
+            messages.pop()
+            messages.append(curr)
+    except: 
+        pass
 
     return {"messages": messages, "response": res, "images": urls}
 

@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 from pydantic import BaseModel
+
 from fastapi import Request
 import chatbot
 # from langchain_mistralai import ChatMistralAI
@@ -71,11 +72,9 @@ async def getLLMResponse(request: Request):
 
     response = chatbot.chatbot(data["question"], data["messages"])
 
-    return {
-        "messages": response["messages"],
-        "response": response["response"],
-        "images": response["images"]
-    }
+    
+    return response
+
 # @app.post("/voiceChat/")
 # async def voice_chat():
 #     try:

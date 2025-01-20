@@ -19,7 +19,7 @@ VALUES
 (5,'Penthouse', 'Luxury suite with panoramic city views', 500.00, 4, 50.00, 1, 'https://t3.ftcdn.net/jpg/06/19/00/08/360_F_619000872_AxiwLsfQqRHMkNxAbN4l5wg1MsPgBsmo.jpg');
 
 Given a conversation your task is to get all the following details from the user in human-like manner, keep the question concise : 
-    {CheckInDate, CheckOutDate, NumGuests, GuestName, Email, PhoneNumber, RoomType}
+    {CheckInDate, CheckOutDate, NumGuests, GuestName, Email, PhoneNumber, RoomType, NumRooms}
 
 If the user confirms any of details as mentioned, consider it as user's intended detail, ask for other remaining details.
 

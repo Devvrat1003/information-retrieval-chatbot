@@ -18,15 +18,15 @@ export default function Chatbot() {
     let [loading, setLoading] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const recognition = useRef(null);
-    
+
     // Initialize Speech Recognition
     if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-        recognition.current = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.current = new (window.SpeechRecognition ||
+            window.webkitSpeechRecognition)();
         recognition.current.continuous = false;
         recognition.current.interimResults = false;
         recognition.current.lang = "en-US";
     }
-
 
     const startListening = () => {
         if (recognition.current) {
@@ -66,8 +66,8 @@ export default function Chatbot() {
             setLoading(true);
             setChats({ ...chats, question: question });
             const res = await fetch(
-                "https://information-retrieval-chatbot.onrender.com/askLLM",
-                // "http://127.0.0.1:8000/askLLM",
+                // "https://information-retrieval-chatbot.onrender.com/askLLM",
+                "http://127.0.0.1:8000/askLLM",
                 {
                     method: "POST",
                     headers: {
@@ -77,8 +77,7 @@ export default function Chatbot() {
                 }
             );
             let ans = await res.json();
-            // setMessages([...messages, question, ans.response]);
-            // setMessages(ans.messages);
+
             if (ans.images && ans.images.length > 0)
                 setChats({
                     ...chats,
@@ -99,10 +98,10 @@ export default function Chatbot() {
 
     return (
         <div
-            className={`border border-black self-end ml-auto bg-white rounded text-sm flex flex-col justify-between items-center`}
+            className={`border border-black self-end ml-auto rounded text-sm flex flex-col justify-between items-center`}
         >
             <Navbar></Navbar>
-            <div className="w-80 h-[28rem] p-2 flex flex-col justify-between items-center gap-2 rounded">
+            <div className="w-96 bg-white h-[28rem] p-2 flex flex-col justify-between items-center gap-2 rounded">
                 <ChatUI
                     messages={chats.messages}
                     loading={loading}

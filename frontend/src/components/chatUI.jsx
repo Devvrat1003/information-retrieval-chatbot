@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import Markdown from "react-markdown";
+import MarkdownRenderer from "react-markdown-renderer";
 import { ThreeDots } from "react-loader-spinner";
 import { CgAttachment } from "react-icons/cg";
 import { showImageState } from "../atom/chatState";
 import { useRecoilState } from "recoil";
-
+import UserDetailForm from "./userDetailForm";
 export default function ChatUI(props) {
     const messages = props.messages;
     const loading = props.loading;
@@ -30,12 +30,13 @@ export default function ChatUI(props) {
     return (
         <div
             ref={chatContainerRef} // Attach the ref to the container
-            className="w-full overflow-y-scroll flex flex-col border border-black gap-2 p-2 rounded flex-grow justify-start"
+            className="w-full font-poppins overflow-y-scroll flex flex-col text-[13px] border border-black gap-2 p-2 rounded flex-grow justify-start"
         >
+            <UserDetailForm />
             {messages.map((msg, index) => {
                 return (
                     <div
-                        className={`w-fit max-w-[80%] px-2 py-1 rounded text-[13px] ${
+                        className={`w-fit max-w-[80%] px-2 py-1 rounded  ${
                             index === 0 && msg.type === "human" && "hidden"
                         } ${msg.type === "ai" && "bg-[#5ebf2e] self-start"} ${
                             msg.type === "human" && "bg-[#35bae6] self-end"
@@ -53,7 +54,10 @@ export default function ChatUI(props) {
                                 See Images
                             </button>
                         ) : ( */}
-                        <Markdown>{msg.content}</Markdown>
+                        {/* <ReactMarkdown>{msg.content}</ReactMarkdown> */}
+                        <MarkdownRenderer markdown={msg.content} />
+                        {/* <MarkdownRenderer markdown={markdown} /> */}
+
                         {/* )} */}
                     </div>
                 );
