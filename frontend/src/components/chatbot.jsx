@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import "../chatbotUI.css";
 import ChatUI from "./chatUI";
 import Navbar from "./navbar";
@@ -12,12 +11,14 @@ import BeatLoader from "react-spinners/BeatLoader";
 export default function Chatbot() {
     const [messages, setMessages] = useState([]);
     const [question, setQuestion] = useState("");
-
     const [chats, setChats] = useRecoilState(chatState);
-
-    let [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const recognition = useRef(null);
+    const [defaultQuestions, setDefaultQuestions] = useState([
+        "What are the available hotels?",
+        "Book a Hotels ?",
+    ]);
 
     // Initialize Speech Recognition
     if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
@@ -38,13 +39,11 @@ export default function Chatbot() {
                 setQuestion(transcript);
                 setChats({ ...chats, question: transcript });
                 recognition.current.stop();
-                // getResult();
                 setIsListening(false);
             };
 
             recognition.current.onerror = () => {
                 recognition.current.stop();
-
                 setIsListening(false);
                 alert("Error with speech recognition. Please try again.");
             };
@@ -57,16 +56,26 @@ export default function Chatbot() {
         }
     };
 
-    const getResult = async () => {
-        if (chats.question === "") {
+    const handleDefaultQuestionClick = (defaultQuestion) => {
+        setQuestion(defaultQuestion);
+        setChats({ ...chats, question: defaultQuestion });
+        setDefaultQuestions((prevQuestions) =>
+            prevQuestions.filter((q) => q !== defaultQuestion)
+        );
+        getResult(defaultQuestion);
+    };
+
+    const getResult = async (customQuestion = question) => {
+        if (customQuestion === "") {
             alert("Uh Oh! You forgot to ask a question");
             return;
         }
+
         try {
             setLoading(true);
-            setChats({ ...chats, question: question });
+            setChats({ ...chats, question: customQuestion });
             const res = await fetch(
-                // "https://information-retrieval-chatbot.onrender.com/askLLM",
+                //"https://information-retrieval-chatbot.onrender.com/askLLM",
                 "http://127.0.0.1:8000/askLLM",
                 {
                     method: "POST",
@@ -87,89 +96,82 @@ export default function Chatbot() {
             else {
                 setChats({ ...chats, messages: ans.messages });
             }
-            console.log(ans, "ans");
-            console.log(chats, "chats");
             setLoading(false);
         } catch (error) {
-            // console.log("error", error);
-            return;
+            console.error("Error fetching result:", error);
+            setLoading(false);
         }
     };
 
     return (
         <div
-            className={`border border-black self-end ml-auto rounded text-sm flex flex-col justify-between items-center`}
+            className={`bg-gray-100 shadow-lg w-full max-w-sm mx-auto mt-8 rounded-lg overflow-hidden flex flex-col`} // Updated design
         >
-            <Navbar></Navbar>
-            <div className="w-96 bg-white h-[28rem] p-2 flex flex-col justify-between items-center gap-2 rounded">
+            <Navbar />
+            <div className="w-full bg-white h-[28rem] p-4 flex flex-col justify-between gap-4">
                 <ChatUI
                     messages={chats.messages}
                     loading={loading}
                     question={question}
                     images={chats.images}
                 />
-                {/* <div>
-                {chats.images[1].map((url, index) => {
-                    return <img src={url} alt="Image urls" />;
-                })}
-            </div> */}
-
-                <div className="flex gap-2  w-full">
+                <div className="flex gap-2 w-full">
                     <input
-                        placeholder="Message..."
-                        className="outline-none border border-black p-2 rounded w-full font-mono bg-transparent "
+                        placeholder="Type a message..."
+                        className="outline-none border border-gray-300 p-3 rounded-lg w-full bg-gray-50 text-sm shadow-inner"
                         type="text"
                         onKeyDown={(e) => {
-                            if (e.key == "Enter") {
+                            if (e.key === "Enter") {
                                 getResult();
                                 setQuestion(e.target.value);
                                 e.target.value = "";
                             }
                         }}
                         onChange={(e) => {
-                            // setQuestion(e.target.value);
                             setQuestion(e.target.value);
                             setChats({ ...chats, question: e.target.value });
                         }}
                     />
-
                     <button
                         onClick={(e) => {
                             getResult();
                             e.target.previousElementSibling.value = "";
                         }}
-                        className="w-fit p-1 justify-center border border-black rounded hover:bg-[#b0bd7c] font-serif flex items-center gap-2"
+                        className="bg-blue-500 text-white rounded-full p-3 hover:bg-blue-600 flex items-center justify-center shadow-lg"
                     >
-                        Send
-                        <IoMdSend />
+                        <IoMdSend size={20} />
                     </button>
-                    {/* <button
-                            onClick={() => {
-                                newChat();
-                                console.log(chats, "chats");
-                            }}
-                            className="w-1/2 p-1 border border-black rounded hover:bg-[#b0bd7c] font-serif"
-                        >
-                            New Chat
-                        </button> */}
                     <button
                         onClick={startListening}
-                        className={`w-fit p-2 border border-black rounded flex items-center gap-1 ${
+                        className={`p-3 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg ${
                             isListening
-                                ? "bg-[#f0a500]"
-                                : "hover:bg-[#b0bd7c] px-4"
-                        } font-serif`}
+                                ? "bg-red-500"
+                                : "bg-green-500 hover:bg-green-600"
+                        } text-white`}
                     >
                         {isListening ? (
-                            <BeatLoader size={6} speedMultiplier={0.5} />
+                            <BeatLoader size={8} color="white" />
                         ) : (
-                            <FaMicrophone />
+                            <FaMicrophone size={20} />
                         )}
                     </button>
-                    {/* </div> */}
+                </div>
+                <div className="w-full flex flex-col gap-2">
+                    {defaultQuestions.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                            {defaultQuestions.map((q, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleDefaultQuestionClick(q)}
+                                    className="bg-gray-200 text-gray-800 rounded-lg p-2 hover:bg-gray-300"
+                                >
+                                    {q}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
-            {/* </div> */}
         </div>
     );
 }
