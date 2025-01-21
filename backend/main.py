@@ -53,7 +53,7 @@ async def root():
     return {"message": "Hello World"}
 
 # with open("optimizedPrompt", "r") as f:   
-with open("singleHotelPrompt", "r") as f:
+with open("singleHotelPrompt", "r", encoding="utf-8") as f:
     messages = []
     prompt = f.read()
 
