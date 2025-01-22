@@ -95,36 +95,60 @@ export default function Chatbot() {
             setChats({ ...chats, question: customQuestion, messages: updatedMessages });
             
             const res = await fetch(
-                "https://information-retrieval-chatbot.onrender.com/askLLM",
-                //"http://127.0.0.1:8000/askLLM",
+                "http://127.0.0.1:8000/askLLM",
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({...chats, messages: updatedMessages}),
+                    body: JSON.stringify({
+                        messages: updatedMessages,
+                        question: customQuestion
+                    }),
                 }
             );
-            let ans = await res.json();
 
-            // Add timestamp to AI response
-            const messagesWithTimestamp = ans.messages.map(msg => ({
-                ...msg,
-                timestamp: msg.timestamp || new Date().toISOString()
-            }));
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+
+            const ans = await res.json();
+            
+            // Add AI response with timestamp
+            const aiMessage = {
+                type: 'ai',
+                content: ans.response || ans.message || "Sorry, I couldn't process that request.",
+                timestamp: new Date().toISOString()
+            };
+
+            const newMessages = [...updatedMessages, aiMessage];
 
             if (ans.images && ans.images.length > 0) {
                 setChats({
                     ...chats,
-                    messages: messagesWithTimestamp,
+                    messages: newMessages,
                     images: ans.images,
                 });
             } else {
-                setChats({ ...chats, messages: messagesWithTimestamp });
+                setChats({ 
+                    ...chats, 
+                    messages: newMessages 
+                });
             }
             setLoading(false);
+            setQuestion("");
         } catch (error) {
             console.error("Error fetching result:", error);
+            // Add error message to chat
+            const errorMessage = {
+                type: 'ai',
+                content: "Sorry, there was an error processing your request. Please try again.",
+                timestamp: new Date().toISOString()
+            };
+            setChats({
+                ...chats,
+                messages: [...chats.messages, errorMessage]
+            });
             setLoading(false);
         }
     };
