@@ -75,81 +75,86 @@ export default function Chatbot() {
         // Check if the message is asking to show the form
         if (customQuestion.toLowerCase().includes('show form')) {
             setShowForm(true);
-            setMessages([...messages, { 
-                type: 'ai', 
+            const formMessage = {
+                type: 'ai',
                 content: 'Here is the booking form for you.',
                 timestamp: new Date().toISOString()
-            }]);
+            };
+            setChats(prev => ({
+                ...prev,
+                messages: [...prev.messages, formMessage]
+            }));
             setLoading(false);
+            setQuestion("");
             return;
         }
 
         try {
             setLoading(true);
             // Add user message with timestamp
-            const updatedMessages = [...chats.messages, {
+            const userMessage = {
                 type: 'user',
                 content: customQuestion,
                 timestamp: new Date().toISOString()
-            }];
-            setChats({ ...chats, question: customQuestion, messages: updatedMessages });
-            
-            const res = await fetch(
-                "http://127.0.0.1:8000/askLLM",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        messages: updatedMessages,
-                        question: customQuestion
-                    }),
-                }
-            );
+            };
+
+            // Update messages with user's message
+            setChats(prev => ({
+                ...prev,
+                messages: [...prev.messages, userMessage]
+            }));
+
+            // Make API call
+            const res = await fetch("http://127.0.0.1:8000/askLLM", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    question: customQuestion,
+                    messages: [...chats.messages, userMessage] // Include the new message
+                }),
+            });
 
             if (!res.ok) {
                 throw new Error(`HTTP error! status: ${res.status}`);
             }
 
-            const ans = await res.json();
-            
-            // Add AI response with timestamp
+            const data = await res.json();
+            console.log("Backend response:", data); // Debug log
+
+            // Create AI message
             const aiMessage = {
                 type: 'ai',
-                content: ans.response || ans.message || "Sorry, I couldn't process that request.",
+                content: data.response || data.message || "Sorry, I couldn't process that request.",
                 timestamp: new Date().toISOString()
             };
 
-            const newMessages = [...updatedMessages, aiMessage];
+            // Update messages with AI response
+            setChats(prev => ({
+                ...prev,
+                messages: [...prev.messages, aiMessage],
+                images: data.images || []
+            }));
 
-            if (ans.images && ans.images.length > 0) {
-                setChats({
-                    ...chats,
-                    messages: newMessages,
-                    images: ans.images,
-                });
-            } else {
-                setChats({ 
-                    ...chats, 
-                    messages: newMessages 
-                });
-            }
             setLoading(false);
             setQuestion("");
+
         } catch (error) {
             console.error("Error fetching result:", error);
-            // Add error message to chat
             const errorMessage = {
                 type: 'ai',
                 content: "Sorry, there was an error processing your request. Please try again.",
                 timestamp: new Date().toISOString()
             };
-            setChats({
-                ...chats,
-                messages: [...chats.messages, errorMessage]
-            });
+            
+            setChats(prev => ({
+                ...prev,
+                messages: [...prev.messages, errorMessage]
+            }));
+            
             setLoading(false);
+            setQuestion("");
         }
     };
 
