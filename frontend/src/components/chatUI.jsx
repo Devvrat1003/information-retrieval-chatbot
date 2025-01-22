@@ -19,6 +19,14 @@ export default function ChatUI(props) {
         setShowImage(!showImage);
     };
 
+    const formatTimestamp = (timestamp) => {
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString([], { 
+            hour: '2-digit', 
+            minute: '2-digit'
+        });
+    };
+
     useEffect(() => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -28,39 +36,74 @@ export default function ChatUI(props) {
     return (
         <div
             ref={chatContainerRef}
-            className="w-full font-sans overflow-y-scroll flex flex-col text-sm border border-gray-300 bg-white shadow-lg gap-3 p-4 rounded-b-lg flex-grow"
+            className="w-full font-sans overflow-y-scroll flex flex-col text-sm bg-white shadow-none gap-4 p-4 rounded-lg flex-grow"
+            style={{ 
+                maxHeight: "calc(100vh - 180px)",
+                scrollBehavior: "smooth"
+            }}
         >
-            <UserDetailForm />
+            <UserDetailForm showForm={props.showForm} />
             {messages.map((msg, index) => (
-                <div
-                    className={`w-fit max-w-[75%] px-3 py-2 rounded-lg shadow-md ${
-                        msg.type === "ai" ? "bg-purple-100 text-purple-900 self-start" : "bg-blue-100 text-blue-900 self-end"
-                    }`}
-                    key={index}
-                >
-                    <MarkdownRenderer markdown={msg.content} />
+                <div key={index} className="flex flex-col">
+                    <div
+                        className={`w-fit max-w-[80%] px-5 py-3 rounded-2xl shadow-sm transition-all duration-300 ${
+                            msg.type === "ai" 
+                                ? "bg-gray-100 text-gray-800 self-start rounded-bl-none transform hover:-translate-y-0.5" 
+                                : "bg-blue-500 text-white self-end rounded-br-none transform hover:-translate-y-0.5"
+                        } ${loading && index === messages.length - 1 ? "opacity-90" : ""}`}
+                    >
+                        {msg.isWelcomeMessage ? (
+                            <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                        ) : (
+                            <MarkdownRenderer 
+                                markdown={msg.content}
+                                className="prose prose-sm max-w-none break-words"
+                                options={{
+                                    overrides: {
+                                        h1: { props: { className: 'text-lg font-bold mb-2' }},
+                                        h2: { props: { className: 'text-base font-semibold mb-2' }},
+                                        p: { props: { className: 'mb-1 leading-relaxed' }},
+                                        ul: { props: { className: 'list-disc ml-4 mb-2 space-y-1' }},
+                                        li: { props: { className: 'mb-1' }}
+                                    }
+                                }}
+                            />
+                        )}
+                    </div>
+                    {msg.timestamp && !msg.isWelcomeMessage && (
+                        <span className={`text-xs text-gray-500 mt-1 ${
+                            msg.type === "ai" ? "self-start ml-2" : "self-end mr-2"
+                        }`}>
+                            {formatTimestamp(msg.timestamp)}
+                        </span>
+                    )}
                 </div>
             ))}
             {loading && (
-                <div className="w-full flex flex-col items-end">
-                    <p className="w-fit max-w-[75%] bg-blue-100 text-blue-900 px-3 py-2 rounded-lg shadow-md">
+                <div className="w-full flex flex-col items-end space-y-3">
+                    <p className="w-fit max-w-[75%] bg-blue-500 text-white px-5 py-3 rounded-2xl shadow-sm">
                         {question}
                     </p>
-                    <ThreeDots
-                        visible={true}
-                        height="24"
-                        width="24"
-                        color="#5b21b6"
-                        ariaLabel="loading"
-                    />
+                    <div className="mr-3">
+                        <ThreeDots
+                            visible={true}
+                            height="30"
+                            width="30"
+                            color="#3b82f6"
+                            ariaLabel="loading"
+                            wrapperClass="opacity-75"
+                        />
+                    </div>
                 </div>
             )}
-            {images.length > 0 && images[0][1].length > 0 && (
-                <CgAttachment
-                    size={28}
-                    className="absolute right-4 top-16 cursor-pointer bg-gray-100 hover:bg-gray-200 p-1 rounded-full"
+            {images?.length > 0 && images[0][1]?.length > 0 && (
+                <button
                     onClick={showImages}
-                />
+                    className="absolute right-4 top-16 p-2.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 transform hover:scale-105"
+                    aria-label="Show images"
+                >
+                    <CgAttachment size={22} className="text-gray-600" />
+                </button>
             )}
         </div>
     );
