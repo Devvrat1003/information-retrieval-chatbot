@@ -105,7 +105,8 @@ export default function Chatbot() {
             }));
 
             // Make API call
-            const res = await fetch("http://127.0.0.1:8000/askLLM", {
+            const res = await fetch("https://information-retrieval-chatbot.onrender.com/askLLM",
+                "http://127.0.0.1:8000/askLLM", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
