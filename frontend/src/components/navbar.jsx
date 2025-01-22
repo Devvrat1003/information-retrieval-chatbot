@@ -1,7 +1,8 @@
 import { IoMdClose } from "react-icons/io";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { chatState, showChatState } from "../atom/chatState";
-import { FaWindowMinimize } from "react-icons/fa6";
+import { FaMinus } from "react-icons/fa";
+
 export default function Navbar() {
     const [showChat, setShowChat] = useRecoilState(showChatState);
     const toggleChat = () => {
@@ -15,7 +16,7 @@ export default function Navbar() {
             ...chats,
             messages: [
                 {
-                    content: "Hello, welcome to Swaroop Vilas Hotel",
+                    content: "Hello, welcome to Prasanth Vilas Hotel 🌟",
                     type: "ai",
                 },
             ],
@@ -24,19 +25,17 @@ export default function Navbar() {
     };
 
     return (
-        <div className="bg-black border border-black text-white w-full flex justify-between items-center p-2 px-3 rounded-t">
-            <div className=" text-center border border-black text-lg font-medium font-serif ">
-                Hotel Chatbot
-            </div>
-            <div className="flex items-center gap-2">
-                <FaWindowMinimize
-                    size={20}
+        <div className="bg-gradient-to-r from-purple-500 to-indigo-500 border-b text-white w-full flex justify-between items-center p-3 rounded-t-lg shadow-md">
+            <h1 className="text-lg font-semibold font-sans tracking-wide">Hotel Chatbot</h1>
+            <div className="flex items-center gap-3">
+                <FaMinus
+                    size={18}
                     onClick={toggleChat}
-                    className="cursor-pointer h-fit p-1"
+                    className="cursor-pointer hover:scale-105"
                 />
                 <IoMdClose
                     size={20}
-                    className="cursor-pointer"
+                    className="cursor-pointer hover:scale-105"
                     onClick={() => {
                         toggleChat();
                         newChat();
