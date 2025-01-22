@@ -16,7 +16,7 @@ export default function Navbar() {
             ...chats,
             messages: [
                 {
-                    content: "Hello, welcome to Prasanth Vilas Hotel 🌟",
+                    content: "Hello, welcome to Swaroop  Vilas Hotel 🌟",
                     type: "ai",
                 },
             ],
