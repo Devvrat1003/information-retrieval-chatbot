@@ -5,7 +5,6 @@ import { IoIosArrowDown } from "react-icons/io";
 
 export default function UserDetailForm(props) {
     const [showRooms, setShowRooms] = useState(false);
-    const [showForm, setShowForm] = useState(false); // State to control form visibility
     const [userDetails, setUserDetails] = useRecoilState(userDetailsState);
 
     const setRoomType = (e) => {
@@ -49,14 +48,7 @@ export default function UserDetailForm(props) {
 
     return (
         <div>
-            <button
-                className="bg-gray-500 text-white py-2 px-4 rounded mt-4"
-                onClick={() => setShowForm(!showForm)}
-            >
-                {showForm ? "Hide Form" : "Show Form"}
-            </button>
-
-            {showForm && (
+            {props.showForm && (
                 <div className="flex flex-col gap-2 mt-4">
                     <div>
                         <label htmlFor="checkInDate"> Check In Date: </label>
