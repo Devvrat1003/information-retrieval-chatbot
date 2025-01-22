@@ -95,7 +95,8 @@ export default function Chatbot() {
             setChats({ ...chats, question: customQuestion, messages: updatedMessages });
             
             const res = await fetch(
-                "http://127.0.0.1:8000/askLLM",
+                "https://information-retrieval-chatbot.onrender.com/askLLM",
+                //"http://127.0.0.1:8000/askLLM",
                 {
                     method: "POST",
                     headers: {
