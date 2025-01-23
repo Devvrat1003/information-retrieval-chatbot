@@ -16,8 +16,8 @@ export default function Chatbot() {
     const [isListening, setIsListening] = useState(false);
     const recognition = useRef(null);
     const [defaultQuestions, setDefaultQuestions] = useState([
-        "What are the available hotels?",
-        "Book  Hotels ?",
+        "Check room availability?",
+        "Book Hotel Room ?",
     ]);
     const [showForm, setShowForm] = useState(false);
 
