@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../chatbotUI.css";
 import ChatUI from "./chatUI";
 import Navbar from "./navbar";
@@ -59,9 +59,6 @@ export default function Chatbot() {
     const handleDefaultQuestionClick = (defaultQuestion) => {
         setQuestion(defaultQuestion);
         setChats({ ...chats, question: defaultQuestion });
-        setDefaultQuestions((prevQuestions) =>
-            prevQuestions.filter((q) => q !== defaultQuestion)
-        );
         getResult(defaultQuestion);
     };
 
@@ -104,8 +101,8 @@ export default function Chatbot() {
             }));
 
             // Make API call
-            const res = await fetch("https://information-retrieval-chatbot.onrender.com/askLLM",
-                //"http://127.0.0.1:8000/askLLM",
+            const res = await fetch(//"https://information-retrieval-chatbot.onrender.com/askLLM",
+                "http://127.0.0.1:8000/askLLM",
                 {
                 method: "POST",
                 headers: {
@@ -158,6 +155,18 @@ export default function Chatbot() {
             setQuestion("");
         }
     };
+
+    useEffect(() => {
+        // Add the handler to the window object
+        window.handleDefaultQuestion = (question) => {
+            handleDefaultQuestionClick(question);
+        };
+
+        // Cleanup
+        return () => {
+            delete window.handleDefaultQuestion;
+        };
+    }, [chats]); // Add chats to the dependency array
 
     return (
         <div className="border border-gray-100 shadow-xl self-end ml-auto rounded-lg text-sm flex flex-col justify-between items-center bg-white">
