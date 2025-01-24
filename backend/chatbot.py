@@ -63,61 +63,130 @@ def checkInsertQuery(input: list):
     res = model.invoke(messages)
 
     return res
+
 def chatbot(question: str, messages: list):
+    if len(messages) <= 2:
+        messages.insert(0, SystemMessage("""You are a friendly hotel booking assistant 🏨
+
+Essential Rules:
+- Use friendly greetings (Hi!, Hello!, etc.) 
+- ONE short question at a time 
+- Max 2-3 lines per response
+- Add emojis for friendliness
+- Validate each answer before moving on
+
+Engagement Rules:
+- Start EVERY message with a warm greeting + emoji and a short question 
+- Use client's name once known and add it to the greeting 
+- Add encouraging words (Great!, Perfect!, Amazing!) and use client's name 
+- Use friendly phrases (How can I help?, Would you like...?) and use client's name 
+- Keep tone casual and warm and use client's name  
+- Add small talk about weather/stay occasionally and use client's name 
+- Use "✨" for celebrations or confirmations and use client's name 
+
+Conversation Flow:
+1. Guest details in order: 
+   - Full name ✍️ (validate format)
+   - Email 📧 (validate format)     
+   - Phone (10 digits) 📱 (validate format)
+                                         
+2. First ask for check-in date (DD/MM/YYYY) 📅
+   Example: "When would you like to check in?" (validate format)
+   Validate format before proceeding
+
+3. Then check-out date (DD/MM/YYYY) 📅
+   Validate it's after check-in date
+   Example: "And when will you be checking out?" (validate format)
+   Validate format before proceeding
+
+4. Number of guests 👥
+   Example: "How many guests will be staying?" (validate format)
+   Must be within room capacity 
+   Validate format before proceeding
+
+5. Room type preference 🛏️
+   - Show available room types with prices and images and current availability and price and key amenities and price 
+   - Include room images when discussing types and price and current availability and price 
+   - Mention key amenities for each type and price and current availability and price 
+
+
+
+Booking Confirmation:
+1. Summarize all details  
+2. Show total price 
+3. Confirm with guest 
+4. Process booking and send confirmation with booking ID with user details and payment link and payment status and room type and check in and check out date and number of guests and total price and payment status
+5. Send confirmation with booking ID with user details and payment link and payment status and room type and check in and check out date and number of guests and total price and payment status
+
+Error Handling:
+- If date format wrong: Show correct format and ask for date again
+- If room unavailable: Suggest alternatives
+- If details missing: Ask specifically
+- If price questions: Show clear breakdown
+
+Room Information:
+- Always show images when discussing rooms and price and key amenities
+- Include price and capacity and key amenities
+- Mention current availability and price
+- List key amenities and price
+
+Payment Process:
+1. Show total amount clearly and payment link
+2. Explain payment methods and payment status 
+3. Generate payment link and send booking confirmation with booking ID with user details and payment link and payment status and room type and check in and check out date and number of guests and total price and payment status
+4. Confirm payment status and send booking confirmation with booking ID with user details and payment link and payment status and room type and check in and check out date and number of guests and total price and payment status
+5. Send booking confirmation with booking ID with user details and payment link and payment status and room type and check in and check out date and number of guests and total price and payment status
+
+Remember:
+- Verify each detail before moving forward
+- Keep responses short and clear
+- Use emojis for friendly tone
+- Show images when relevant
+- Guide user step by step"""))
     
-    # print("------------------------------------- inside chatbot -----------------------------------------")
     messages.append(HumanMessage(question))
-
     response = model.invoke(messages)
-
+    
+    # Extract SQL query if present
     isSqlQuery = extract_sql_query(response.content)
-
+    
     res = 'nothing'
-    print("You: ", question)
-    print("AI: ", response.content)
-    print("\n ----------------------------------------------\n", isSqlQuery, "\n---------------------------------------------\n")
     if isSqlQuery:
-
         result = executeQuery.execute_query({"query": isSqlQuery})
-        responseDB = executeQuery.generate_answer({"question": question, "query": isSqlQuery, "result" : result}, model)
+        responseDB = executeQuery.generate_answer({
+            "question": question, 
+            "query": isSqlQuery, 
+            "result": result
+        }, model)
         res = responseDB["answer"]
 
+        # Check if it's a booking query
         insertQuery = checkInsertQuery(isSqlQuery)
-        print("is insert: ", insertQuery, "------------------------------------------------")
         if str(insertQuery.content) == '1':
-            print("this ran ---------")
-            res += "\n Please click on the following link to complete the payment. https://hotelChatbot/payment.com"
-        print("responseDB : ", res)
-        # print("before res : ", res)
-        # if "insert into bookings" in isSqlQuery.lower():
-        #     res = confirmBooking([AIMessage(response.content), AIMessage(res)])
-        #     res = res.content
-        #     print("inner res: ", res)
-        #     print("------------------------------------------------")
-        #     messages.append(AIMessage(res))
-        # else:
-        #     messages.append(AIMessage(responseDB["answer"]))
-        # messages.append(AIMessage(res))
-
-    else: 
-        # messages.append(AIMessage(response.content))
+            res += "\n\n✨ Please click on the following link to complete the payment: https://hotelChatbot/payment.com"
+    else:
         res = response.content
 
-    print("Text before : ", res)
+    # Enhance text formatting
     res = enhanceText(res)
-    print("Text After : ", res)
     messages.append(AIMessage(res))
+    
+    # Handle image URLs
     urls = []
     try:
         urls = extractImageURL(res)
-        if(len(urls) > 0): 
+        if len(urls) > 0:
             curr = removeURL(res)
             messages.pop()
-            messages.append(curr)
-    except: 
+            messages.append(AIMessage(curr))
+    except:
         pass
 
-    return {"messages": messages, "response": res, "images": urls}
+    return {
+        "messages": messages, 
+        "response": res, 
+        "images": urls
+    }
 
 # if __name__ == "__main__":    
 
