@@ -13,3 +13,8 @@ typing_extensions
 langchain_mistralai
 SpeechRecognition
 pyttsx3
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+gtts
