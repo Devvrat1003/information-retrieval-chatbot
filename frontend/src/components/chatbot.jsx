@@ -19,40 +19,86 @@ export default function Chatbot() {
         
     ]);
     const [showForm, setShowForm] = useState(false);
+    const audioRef = useRef(new Audio());
+    const [autoPlayAudio, setAutoPlayAudio] = useState(true);
 
-    // Initialize Speech Recognition
-    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-        recognition.current = new (window.SpeechRecognition ||
-            window.webkitSpeechRecognition)();
-        recognition.current.continuous = false;
-        recognition.current.interimResults = false;
-        recognition.current.lang = "en-US";
-    }
+    // Separate refs for different sounds
+    const sendSoundRef = useRef(new Audio('/sounds/send-message.mp3'));
+    const receiveSoundRef = useRef(new Audio('/sounds/send-message.mp3'));
+    const [isReceiveSoundMuted, setIsReceiveSoundMuted] = useState(false);
+
+    // Separate functions for send and receive sounds
+    const playSendSound = () => {
+        sendSoundRef.current.currentTime = 0;
+        sendSoundRef.current.volume = 0.5;
+        sendSoundRef.current.play().catch(e => {
+            console.error("Send sound effect error:", e);
+        });
+    };
+
+    const playReceiveSound = () => {
+        if (!isReceiveSoundMuted) {
+            receiveSoundRef.current.currentTime = 0;
+            receiveSoundRef.current.volume = 0.5;
+            receiveSoundRef.current.play().catch(e => {
+                console.error("Receive sound effect error:", e);
+            });
+        }
+    };
+
+    // Update the mute toggle to only affect receive sound
+    const toggleSound = () => {
+        setIsReceiveSoundMuted(!isReceiveSoundMuted);
+    };
+
+    // Enhanced speech recognition setup
+    useEffect(() => {
+        if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+            recognition.current = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.current.continuous = false;
+            recognition.current.interimResults = false;
+            recognition.current.lang = "en-US";
+
+            // Add error handling for initialization
+            recognition.current.onerror = (event) => {
+                console.error("Speech recognition error:", event.error);
+                setIsListening(false);
+                if (event.error === 'not-allowed') {
+                    alert("Please enable microphone permissions for speech recognition to work.");
+                }
+            };
+        } else {
+            console.error("Speech recognition not supported in this browser");
+        }
+    }, []);
 
     const startListening = () => {
         if (recognition.current) {
-            recognition.current.start();
-            setIsListening(true);
+            try {
+                recognition.current.start();
+                setIsListening(true);
 
-            recognition.current.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                setQuestion(transcript);
-                setChats({ ...chats, question: transcript });
-                recognition.current.stop();
-                setIsListening(false);
-            };
+                recognition.current.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    console.log("Recognized text:", transcript); // Debug log
+                    setQuestion(transcript);
+                    setChats({ ...chats, question: transcript });
+                    recognition.current.stop();
+                    setIsListening(false);
+                };
 
-            recognition.current.onerror = () => {
-                recognition.current.stop();
-                setIsListening(false);
-                alert("Error with speech recognition. Please try again.");
-            };
+                recognition.current.onend = () => {
+                    console.log("Speech recognition ended"); // Debug log
+                    setIsListening(false);
+                };
 
-            recognition.current.onend = () => {
+            } catch (error) {
+                console.error("Speech recognition error:", error);
                 setIsListening(false);
-            };
+                alert("Error starting speech recognition. Please try again.");
+            }
         } else {
-            alert("Your browser does not support speech recognition.");
+            alert("Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari.");
         }
     };
 
@@ -60,6 +106,32 @@ export default function Chatbot() {
         setQuestion(defaultQuestion);
         setChats({ ...chats, question: defaultQuestion });
         getResult(defaultQuestion);
+    };
+
+    const playAudioResponse = (audioBase64) => {
+        if (!autoPlayAudio) {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+            }
+            return;
+        }
+
+        // If there's a previous audio playing, stop it
+        if (audioRef.current.src) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+        
+        const audioSrc = `data:audio/mp3;base64,${audioBase64}`;
+        audioRef.current.src = audioSrc;
+        
+        // Add event listener for when audio ends
+        audioRef.current.onended = () => {
+            audioRef.current.currentTime = 0; // Reset for next play
+        };
+
+        audioRef.current.play().catch(e => console.error("Audio playback error:", e));
     };
 
     const getResult = async (customQuestion = question) => {
@@ -87,6 +159,8 @@ export default function Chatbot() {
 
         try {
             setLoading(true);
+            playSendSound(); // This will always play
+
             // Add user message with timestamp
             const userMessage = {
                 type: 'user',
@@ -121,6 +195,16 @@ export default function Chatbot() {
             const data = await res.json();
             console.log("Backend response:", data); // Debug log
 
+            // Play receive sound before AI response
+            playReceiveSound();
+
+            // Handle audio response
+            if (data.audio) {
+                setTimeout(() => {
+                    playAudioResponse(data.audio);
+                }, 500); // Small delay after receive sound
+            }
+
             // Create AI message
             const aiMessage = {
                 type: 'ai',
@@ -140,6 +224,7 @@ export default function Chatbot() {
 
         } catch (error) {
             console.error("Error fetching result:", error);
+            playReceiveSound(); // Even play sound for error messages
             const errorMessage = {
                 type: 'ai',
                 content: "Sorry, there was an error processing your request. Please try again.",
@@ -167,6 +252,22 @@ export default function Chatbot() {
             delete window.handleDefaultQuestion;
         };
     }, [chats]); // Add chats to the dependency array
+
+    // Update audio mute toggle
+    const toggleAudio = () => {
+        setAutoPlayAudio(!autoPlayAudio);
+        // If unmuting, reset audio refs
+        if (!autoPlayAudio) {
+            audioRef.current.currentTime = 0;
+            sendSoundRef.current.currentTime = 0;
+            receiveSoundRef.current.currentTime = 0;
+        } else {
+            // If muting, pause any playing audio
+            audioRef.current.pause();
+            sendSoundRef.current.pause();
+            receiveSoundRef.current.pause();
+        }
+    };
 
     return (
         <div className="border border-gray-100 shadow-xl self-end ml-auto rounded-lg text-sm flex flex-col justify-between items-center bg-white">
@@ -197,13 +298,19 @@ export default function Chatbot() {
                         }}
                     />
                     <button
-                        onClick={(e) => {
-                            getResult();
-                            e.target.previousElementSibling.value = "";
-                        }}
+                        onClick={() => getResult()}
                         className="bg-indigo-600 text-white rounded-full p-2.5 hover:bg-indigo-700 flex items-center justify-center transition-all shadow-sm hover:shadow-indigo-100 hover:shadow-lg"
                     >
                         <IoMdSend size={20} />
+                    </button>
+                    <button
+                        onClick={toggleAudio}
+                        className={`p-2.5 rounded-full ${
+                            autoPlayAudio ? 'bg-indigo-600' : 'bg-gray-400'
+                        } text-white hover:shadow-lg transition-all`}
+                        title={autoPlayAudio ? 'Disable voice responses' : 'Enable voice responses'}
+                    >
+                        {autoPlayAudio ? '🔊' : '🔇'}
                     </button>
                     <button
                         onClick={startListening}
@@ -211,12 +318,28 @@ export default function Chatbot() {
                             isListening
                                 ? "bg-red-500 hover:bg-red-600"
                                 : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-100"
-                        } text-white`}
+                        } text-white relative`}
+                        disabled={loading}
                     >
                         {isListening ? (
-                            <BeatLoader size={8} color="white" />
+                            <>
+                                <BeatLoader size={8} color="white" />
+                                <span className="absolute -top-8 whitespace-nowrap text-xs bg-black text-white px-2 py-1 rounded">
+                                    Listening...
+                                </span>
+                            </>
                         ) : (
                             <FaMicrophone size={20} />
+                        )}
+                    </button>
+                    <button
+                        onClick={toggleSound}
+                        className="sound-toggle-btn"
+                    >
+                        {isReceiveSoundMuted ? (
+                            <i className="fas fa-volume-mute"></i>
+                        ) : (
+                            <i className="fas fa-volume-up"></i>
                         )}
                     </button>
                 </div>
