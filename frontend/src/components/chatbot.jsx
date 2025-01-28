@@ -51,54 +51,128 @@ export default function Chatbot() {
         setIsReceiveSoundMuted(!isReceiveSoundMuted);
     };
 
-    // Enhanced speech recognition setup
+    // Enhanced speech recognition setup with better device support
     useEffect(() => {
-        if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-            recognition.current = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.current.continuous = false;
-            recognition.current.interimResults = false;
-            recognition.current.lang = "en-US";
+        const setupSpeechRecognition = () => {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                console.error("Speech recognition not supported");
+                return;
+            }
 
-            // Add error handling for initialization
-            recognition.current.onerror = (event) => {
-                console.error("Speech recognition error:", event.error);
-                setIsListening(false);
-                if (event.error === 'not-allowed') {
-                    alert("Please enable microphone permissions for speech recognition to work.");
-                }
-            };
-        } else {
-            console.error("Speech recognition not supported in this browser");
-        }
-    }, []);
-
-    const startListening = () => {
-        if (recognition.current) {
             try {
-                recognition.current.start();
-                setIsListening(true);
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition.current = new SpeechRecognition();
 
-                recognition.current.onresult = (event) => {
-                    const transcript = event.results[0][0].transcript;
-                    console.log("Recognized text:", transcript); // Debug log
-                    setQuestion(transcript);
-                    setChats({ ...chats, question: transcript });
-                    recognition.current.stop();
-                    setIsListening(false);
+                // Set to false to stop after each message
+                recognition.current.continuous = false;
+                recognition.current.interimResults = true;
+                recognition.current.lang = 'en-US';
+
+                recognition.current.onstart = () => {
+                    console.log("Speech recognition started");
+                    setIsListening(true);
                 };
 
                 recognition.current.onend = () => {
-                    console.log("Speech recognition ended"); // Debug log
+                    console.log("Speech recognition ended");
                     setIsListening(false);
                 };
 
+                recognition.current.onresult = (event) => {
+                    let finalTranscript = '';
+                    let interimTranscript = '';
+
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcript;
+                            // Update question when we have final result
+                            setQuestion(finalTranscript);
+                            setChats(prev => ({ ...prev, question: finalTranscript }));
+                            
+                            // Send message and stop listening
+                            if (finalTranscript.trim()) {
+                                getResult(finalTranscript.trim());
+                                stopListening();
+                            }
+                        } else {
+                            interimTranscript += transcript;
+                            setQuestion(interimTranscript);
+                        }
+                    }
+                };
+
+                recognition.current.onerror = (event) => {
+                    console.error("Speech recognition error:", event.error);
+                    setIsListening(false);
+                    stopListening();
+
+                    const errorMessages = {
+                        'not-allowed': "Microphone access denied. Please enable microphone permissions.",
+                        'audio-capture': "No microphone detected. Please check your microphone connection.",
+                        'network': "Network error. Please check your internet connection.",
+                        'no-speech': "No speech detected. Please try speaking again.",
+                        'service-not-allowed': "Speech recognition service is not allowed.",
+                        'bad-grammar': "Speech recognition grammar error.",
+                        'language-not-supported': "Selected language is not supported.",
+                        'aborted': "Speech recognition was aborted."
+                    };
+
+                    alert(errorMessages[event.error] || "Speech recognition error. Please try again.");
+                };
+
             } catch (error) {
-                console.error("Speech recognition error:", error);
-                setIsListening(false);
-                alert("Error starting speech recognition. Please try again.");
+                console.error("Error setting up speech recognition:", error);
             }
-        } else {
-            alert("Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari.");
+        };
+
+        setupSpeechRecognition();
+
+        return () => {
+            stopListening();
+        };
+    }, []);
+
+    // Add stopListening function
+    const stopListening = () => {
+        if (recognition.current) {
+            recognition.current.stop();
+            setIsListening(false);
+        }
+    };
+
+    // Enhanced startListening function
+    const startListening = async () => {
+        if (!recognition.current) {
+            alert("Speech recognition is not supported in your browser. Please use Chrome or Safari.");
+            return;
+        }
+
+        try {
+            // If already listening, stop it
+            if (isListening) {
+                stopListening();
+                return;
+            }
+
+            // Request microphone permission
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            stream.getTracks().forEach(track => track.stop()); // Clean up stream
+
+            // Start new recognition
+            recognition.current.start();
+            setIsListening(true);
+
+        } catch (error) {
+            console.error("Microphone permission error:", error);
+            if (error.name === 'NotAllowedError') {
+                alert("Please enable microphone access in your browser settings to use voice input.");
+            } else if (error.name === 'NotFoundError') {
+                alert("No microphone found. Please check your microphone connection.");
+            } else {
+                alert("Error accessing microphone. Please try again.");
+            }
+            setIsListening(false);
         }
     };
 
@@ -135,48 +209,32 @@ export default function Chatbot() {
     };
 
     const getResult = async (customQuestion = question) => {
-        if (customQuestion === "") {
-            alert("Uh Oh! You forgot to ask a question");
+        if (customQuestion.trim() === "") {
+            alert("Please enter a message");
             return;
         }
 
-        // Check if the message is asking to show the form
-        if (customQuestion.toLowerCase().includes('show form')) {
-            setShowForm(true);
-            const formMessage = {
-                type: 'ai',
-                content: 'Here is the booking form for you.',
-                timestamp: new Date().toISOString()
-            };
-            setChats(prev => ({
-                ...prev,
-                messages: [...prev.messages, formMessage]
-            }));
-            setLoading(false);
-            setQuestion("");
-            return;
+        // Stop listening if active
+        if (isListening) {
+            stopListening();
         }
 
         try {
             setLoading(true);
-            playSendSound(); // This will always play
+            playSendSound();
 
-            // Add user message with timestamp
             const userMessage = {
                 type: 'user',
                 content: customQuestion,
                 timestamp: new Date().toISOString()
             };
 
-            // Update messages with user's message
-            setChats(prev => ({
-                ...prev,
-                messages: [...prev.messages, userMessage]
-            }));
-
+            // Update messages in a single state update
+            const newMessages = [...chats.messages, userMessage];
+            
             // Make API call
-            const res = await fetch("https://information-retrieval-chatbot.onrender.com/askLLM",
-                //"http://127.0.0.1:8000/askLLM",
+            const res = await fetch("https://information-retriever-chatbot.netlify.app",
+                // "http://127.0.0.1:8000/askLLM",
                 {
                 method: "POST",
                 headers: {
@@ -184,7 +242,7 @@ export default function Chatbot() {
                 },
                 body: JSON.stringify({
                     question: customQuestion,
-                    messages: [...chats.messages, userMessage] // Include the new message
+                    messages: newMessages
                 }),
             });
 
@@ -193,38 +251,29 @@ export default function Chatbot() {
             }
 
             const data = await res.json();
-            console.log("Backend response:", data); // Debug log
-
-            // Play receive sound before AI response
-            playReceiveSound();
-
-            // Handle audio response
+            
             if (data.audio) {
+                playReceiveSound();
                 setTimeout(() => {
                     playAudioResponse(data.audio);
-                }, 500); // Small delay after receive sound
+                }, 500);
             }
 
-            // Create AI message
             const aiMessage = {
                 type: 'ai',
                 content: data.response || data.message || "Sorry, I couldn't process that request.",
                 timestamp: new Date().toISOString()
             };
 
-            // Update messages with AI response
+            // Single state update for both messages
             setChats(prev => ({
                 ...prev,
-                messages: [...prev.messages, aiMessage],
+                messages: [...newMessages, aiMessage],
                 images: data.images || []
             }));
 
-            setLoading(false);
-            setQuestion("");
-
         } catch (error) {
-            console.error("Error fetching result:", error);
-            playReceiveSound(); // Even play sound for error messages
+            console.error("Error:", error);
             const errorMessage = {
                 type: 'ai',
                 content: "Sorry, there was an error processing your request. Please try again.",
@@ -235,9 +284,10 @@ export default function Chatbot() {
                 ...prev,
                 messages: [...prev.messages, errorMessage]
             }));
-            
+        } finally {
             setLoading(false);
             setQuestion("");
+            stopListening(); // Ensure listening is stopped
         }
     };
 
@@ -268,6 +318,16 @@ export default function Chatbot() {
             receiveSoundRef.current.pause();
         }
     };
+
+    // Add visual feedback component for voice recognition
+    const VoiceRecognitionStatus = () => (
+        isListening && (
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-3 py-1 rounded-full text-xs flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                Listening...
+            </div>
+        )
+    );
 
     return (
         <div className="border border-gray-100 shadow-xl self-end ml-auto rounded-lg text-sm flex flex-col justify-between items-center bg-white">
@@ -314,23 +374,15 @@ export default function Chatbot() {
                     </button>
                     <button
                         onClick={startListening}
-                        className={`p-2.5 rounded-full flex items-center justify-center transition-all shadow-sm hover:shadow-lg ${
+                        className={`p-2.5 rounded-full flex items-center justify-center transition-all shadow-sm hover:shadow-lg relative ${
                             isListening
                                 ? "bg-red-500 hover:bg-red-600"
                                 : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-100"
-                        } text-white relative`}
+                        } text-white`}
                         disabled={loading}
                     >
-                        {isListening ? (
-                            <>
-                                <BeatLoader size={8} color="white" />
-                                <span className="absolute -top-8 whitespace-nowrap text-xs bg-black text-white px-2 py-1 rounded">
-                                    Listening...
-                                </span>
-                            </>
-                        ) : (
-                            <FaMicrophone size={20} />
-                        )}
+                        <FaMicrophone size={20} />
+                        <VoiceRecognitionStatus />
                     </button>
                     <button
                         onClick={toggleSound}
