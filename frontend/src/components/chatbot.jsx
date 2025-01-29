@@ -364,15 +364,6 @@ export default function Chatbot() {
                         <IoMdSend size={20} />
                     </button>
                     <button
-                        onClick={toggleAudio}
-                        className={`p-2.5 rounded-full ${
-                            autoPlayAudio ? 'bg-indigo-600' : 'bg-gray-400'
-                        } text-white hover:shadow-lg transition-all`}
-                        title={autoPlayAudio ? 'Disable voice responses' : 'Enable voice responses'}
-                    >
-                        {autoPlayAudio ? '🔊' : '🔇'}
-                    </button>
-                    <button
                         onClick={startListening}
                         className={`p-2.5 rounded-full flex items-center justify-center transition-all shadow-sm hover:shadow-lg relative ${
                             isListening
