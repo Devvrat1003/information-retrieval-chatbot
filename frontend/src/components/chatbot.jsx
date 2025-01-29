@@ -15,12 +15,10 @@ export default function Chatbot() {
     const [loading, setLoading] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const recognition = useRef(null);
-    const [defaultQuestions, setDefaultQuestions] = useState([
-        
-    ]);
+    const [defaultQuestions, setDefaultQuestions] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const audioRef = useRef(new Audio());
-    const [autoPlayAudio, setAutoPlayAudio] = useState(true);
+    const [autoPlayAudio, setAutoPlayAudio] = useState(false);
 
     // Separate refs for different sounds
     const sendSoundRef = useRef(new Audio('/sounds/send-message.mp3'));
@@ -233,8 +231,8 @@ export default function Chatbot() {
             const newMessages = [...chats.messages, userMessage];
             
             // Make API call
-            const res = await fetch("https://information-retrieval-chatbot.onrender.com/askLLM",
-                // "http://127.0.0.1:8000/askLLM",
+            const res = await fetch(//"https://information-retrieval-chatbot.onrender.com/askLLM",
+                "http://127.0.0.1:8000/askLLM",
                 {
                 method: "POST",
                 headers: {
@@ -363,6 +361,7 @@ export default function Chatbot() {
                     >
                         <IoMdSend size={20} />
                     </button>
+                    
                     <button
                         onClick={startListening}
                         className={`p-2.5 rounded-full flex items-center justify-center transition-all shadow-sm hover:shadow-lg relative ${
