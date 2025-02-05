@@ -22,102 +22,76 @@ model = ChatGroq(model="llama3-70b-8192")
 # Update the ROOM_IMAGES constant with proper room details
 ROOM_DETAILS = {
     "Deluxe Room": {
-        "room_id": "DLX",
+        "room_id": 1,  # Updated to match the new room ID
         "total_rooms": 10,
-        "price": 5000,
+        "price": 150.00,
         "max_guests": 2,
         "features": [
-            "400 sq ft room",
             "Queen-sized bed",
-            "City view",
             "En-suite bathroom",
-            "Air conditioning",
-            "Mini bar",
-            "40-inch Smart TV",
-            "Free Wi-Fi"
+            "City view"
         ],
         "images": [
-            "https://example.com/deluxe-room-1.jpg",
-            "https://example.com/deluxe-room-2.jpg"
-        ]
-    },
-    "Family Room": {
-        "room_id": "FAM",
-        "total_rooms": 12,
-        "price": 6500,
-        "max_guests": 4,
-        "features": [
-            "550 sq ft room",
-            "Two Queen-sized beds",
-            "Family lounge area",
-            "Kids play corner",
-            "Large bathroom",
-            "50-inch Smart TV",
-            "Free Wi-Fi",
-            "Mini kitchen"
-        ],
-        "images": [
-            "https://example.com/family-room-1.jpg",
-            "https://example.com/family-room-2.jpg"
-        ]
-    },
-    "Standard Room": {
-        "room_id": "STD",
-        "total_rooms": 10,
-        "price": 3500,
-        "max_guests": 2,
-        "features": [
-            "300 sq ft room",
-            "Double bed",
-            "Work desk",
-            "32-inch TV",
-            "Basic Wi-Fi",
-            "Tea/Coffee maker"
-        ],
-        "images": [
-            "https://example.com/standard-room-1.jpg",
-            "https://example.com/standard-room-2.jpg"
+            "https://media.istockphoto.com/id/1050564510/photo/3d-rendering-beautiful-luxury-bedroom-suite-in-hotel-with-tv.jpg?s=612x612&w=0&k=20&c=ZYEso7dgPl889aYddhY2Fj3GOyuwqliHkbbT8pjl_iM=",
+            "https://www.shutterstock.com/image-photo/hotel-room-interior-modern-seaside-600nw-1387008533.jpg"
         ]
     },
     "Suite": {
-        "room_id": "SUT",
-        "total_rooms": 10,
-        "price": 8000,
+        "room_id": 2,  # Updated to match the new room ID
+        "total_rooms": 5,
+        "price": 300.00,
         "max_guests": 3,
         "features": [
-            "600 sq ft room",
             "King-sized bed",
-            "Separate living room",
-            "Jacuzzi bathroom",
-            "Mini kitchen",
-            "55-inch Smart TV",
-            "Premium Wi-Fi",
-            "24/7 butler service"
+            "Living area",
+            "Premium amenities"
         ],
         "images": [
-            "https://example.com/suite-1.jpg",
-            "https://example.com/suite-2.jpg"
+            "https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?cs=srgb&dl=pexels-pixabay-271618.jpg&fm=jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM5Q1yWCaCax6Yn_I7NoUKJz96Bp_OMXSCjQ&s"
+
+        ]
+    },
+    "Standard Room": {
+        "room_id": 3,  # Updated to match the new room ID
+        "total_rooms": 15,
+        "price": 100.00,
+        "max_guests": 2,
+        "features": [
+            "Cozy room with essential amenities"
+        ],
+        "images": [
+            "https://media.istockphoto.com/id/627892060/photo/hotel-room-suite-with-view.jpg?s=612x612&w=0&k=20&c=YBwxnGH3MkOLLpBKCvWAD8F__T-ypznRUJ_N13Zb1cU=",
+            "https://www.kabayanhotel.com.ph/wp-content/uploads/2016/02/kabayan-standardroom-01.jpg"
+        ]
+    },
+    "Family Room": {
+        "room_id": 4,  # Updated to match the new room ID
+        "total_rooms": 3,
+        "price": 200.00,
+        "max_guests": 4,
+        "features": [
+            "Two queen beds",
+            "Perfect for families"
+        ],
+        "images": [
+            "https://media.istockphoto.com/id/1370825295/photo/modern-hotel-room-with-double-bed-night-tables-tv-set-and-cityscape-from-the-window.jpg?s=612x612&w=0&k=20&c=QMXz9HJVhU-8MtBYyeJxtqLz90j7r0SrR6FTWniPkgc=",
+            "https://www.samasamahotels.com/wp-content/uploads/2024/07/FamilyRoom1-1980x1000-1.jpeg"
+
         ]
     },
     "Penthouse": {
-        "room_id": "PEN",
-        "total_rooms": 10,
-        "price": 12000,
+        "room_id": 5,  # Updated to match the new room ID
+        "total_rooms": 1,
+        "price": 500.00,
         "max_guests": 4,
         "features": [
-            "1000 sq ft room",
-            "Two King-sized beds",
-            "Private terrace",
-            "Panoramic city view",
-            "Full kitchen",
-            "65-inch Smart TV",
-            "Premium Wi-Fi",
-            "Private butler",
-            "Private dining area"
+            "Luxury suite with panoramic city views"
         ],
         "images": [
-            "https://example.com/penthouse-1.jpg",
-            "https://example.com/penthouse-2.jpg"
+            "https://t3.ftcdn.net/jpg/06/19/00/08/360_F_619000872_AxiwLsfQqRHMkNxAbN4l5wg1MsPgBsmo.jpg",
+            "https://www.fairmont-san-francisco.com/content/uploads/2022/05/SAF_Penthouse01_Living_Room-1-1920x922.jpg"
+
         ]
     }
 }
