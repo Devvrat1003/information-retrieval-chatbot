@@ -25,12 +25,12 @@ export const chatState = atom({
                             Check room availability?
                         </button>
                         <button 
-                            onclick="window.handleDefaultQuestion('Book Hotel Room ')"
+                            onclick="window.handleDefaultQuestion('Book Hotel Room')"
                             style="background-color: #f3f4f6; color:  #4F46E5; padding: 8px 16px; border-radius: 9999px; font-size: 14px; border: 1px solid #e5e7eb; cursor: pointer; transition: all 0.2s;"
                             onmouseover="this.style.backgroundColor='#e5e7eb'"
                             onmouseout="this.style.backgroundColor='#f3f4f6'"
                         >
-                            Book Hotel Room ?
+                            Book Hotel Room 
                         </button>
                         <button 
                             onclick="window.handleDefaultQuestion('What are your room types and rates?')"
